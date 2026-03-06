@@ -22,6 +22,44 @@ export default function MemeWall() {
   const [author, setAuthor] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [sortBy, setSortBy] = useState<'newest' | 'likes'>('newest');
+  const [likedMemes, setLikedMemes] = useState<string[]>([]);
+  const [visitorId] = useState(() => {
+    let id = localStorage.getItem('jellybean_visitor_id');
+    if (!id) {
+      id = crypto.randomUUID();
+      localStorage.setItem('jellybean_visitor_id', id);
+    }
+    return id;
+  });
+
+  // Fetch liked memes from Supabase
+  const fetchUserLikes = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('meme_likes')
+        .select('meme_id')
+        .eq('visitor_id', visitorId);
+
+      if (error) {
+        // If table doesn't exist yet, we'll just use empty array
+        if (error.code === 'PGRST116' || error.message.includes('relation "meme_likes" does not exist')) {
+          console.warn('meme_likes table not found. Please create it in Supabase.');
+          return;
+        }
+        throw error;
+      }
+      
+      if (data) {
+        setLikedMemes(data.map(item => item.meme_id));
+      }
+    } catch (error) {
+      console.error('Error fetching user likes:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserLikes();
+  }, [visitorId]);
 
   // Prevent scrolling when modal is open
   useEffect(() => {
@@ -62,20 +100,48 @@ export default function MemeWall() {
   };
 
   const handleLike = async (memeId: string, currentLikes: number) => {
+    const isAlreadyLiked = likedMemes.includes(memeId);
+    const newLikes = isAlreadyLiked ? Math.max(0, (currentLikes || 0) - 1) : (currentLikes || 0) + 1;
+
     try {
-      const { error } = await supabase
+      // 1. Update the likes count in the memes table
+      const { error: updateError } = await supabase
         .from('memes')
-        .update({ likes: (currentLikes || 0) + 1 })
+        .update({ likes: newLikes })
         .eq('id', memeId);
 
-      if (error) throw error;
+      if (updateError) throw updateError;
 
-      // Optimistic update
+      // 2. Update the meme_likes table to persist the user's choice
+      if (isAlreadyLiked) {
+        const { error: deleteError } = await supabase
+          .from('meme_likes')
+          .delete()
+          .match({ meme_id: memeId, visitor_id: visitorId });
+        
+        if (deleteError) throw deleteError;
+      } else {
+        const { error: insertError } = await supabase
+          .from('meme_likes')
+          .insert([{ meme_id: memeId, visitor_id: visitorId }]);
+        
+        if (insertError) throw insertError;
+      }
+
+      // Optimistic UI update
       setMemes(prev => prev.map(m => 
-        m.id === memeId ? { ...m, likes: (m.likes || 0) + 1 } : m
+        m.id === memeId ? { ...m, likes: newLikes } : m
       ));
+
+      if (isAlreadyLiked) {
+        setLikedMemes(prev => prev.filter(id => id !== memeId));
+      } else {
+        setLikedMemes(prev => [...prev, memeId]);
+      }
     } catch (error) {
       console.error('Error liking meme:', error);
+      // If table doesn't exist, we might get an error here too
+      alert('Make sure to create the "meme_likes" table in Supabase!');
     }
   };
 
@@ -212,9 +278,9 @@ export default function MemeWall() {
                       <motion.button 
                         whileTap={{ scale: 1.5 }}
                         onClick={() => handleLike(meme.id, meme.likes)}
-                        className="flex items-center gap-2 bg-pink-500 px-4 py-2 rounded-full font-black text-sm shadow-lg hover:bg-pink-400 transition-colors"
+                        className={`flex items-center gap-2 px-4 py-2 rounded-full font-black text-sm shadow-lg transition-colors ${likedMemes.includes(meme.id) ? 'bg-pink-500 text-white' : 'bg-white/20 text-white hover:bg-white/30'}`}
                       >
-                        <Heart className="w-5 h-5 fill-white" />
+                        <Heart className={`w-5 h-5 ${likedMemes.includes(meme.id) ? "fill-white" : ""}`} />
                         {meme.likes || 0}
                       </motion.button>
                     </div>
@@ -227,7 +293,7 @@ export default function MemeWall() {
                   <div className="flex items-center justify-between">
                     <span className="text-pink-400 font-black text-sm uppercase tracking-widest">@{meme.author}</span>
                     <div className="flex items-center gap-1 text-white/30">
-                      <Heart size={12} className={meme.likes > 0 ? "text-pink-500 fill-pink-500" : ""} />
+                      <Heart size={12} className={likedMemes.includes(meme.id) ? "text-pink-500 fill-pink-500" : ""} />
                       <span className="text-xs font-bold">{meme.likes || 0}</span>
                     </div>
                   </div>
