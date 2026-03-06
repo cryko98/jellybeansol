@@ -1,6 +1,8 @@
 import { useState, useRef } from 'react';
 import { motion, useScroll, useTransform, useSpring } from 'motion/react';
 import { Copy, Check, Wallet, ShoppingCart, Repeat, CheckCircle2, ChevronDown } from 'lucide-react';
+import MemeGenerator from './components/MemeGenerator';
+import MemeWall from './components/MemeWall';
 
 const CONTRACT_ADDRESS = '412zDygnwP9DzitnQVgRKUFFTDmrYScFch6P2k39pump';
 
@@ -266,13 +268,20 @@ export default function App() {
               <p className="text-4xl md:text-6xl font-museo text-white drop-shadow-2xl italic font-black">It's here to take over timelines.</p>
             </div>
 
-            <div className="flex justify-between w-full mt-20 px-4">
+            <div className="flex flex-col md:flex-row items-center justify-between w-full mt-20 px-4 gap-8">
               <motion.img 
                 animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }}
                 transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
                 src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/jellybean-1-0ni0BiSWV1vCVkaU.png" 
                 className="w-40 md:w-64 drop-shadow-2xl" 
                 alt="" 
+              />
+              <motion.img 
+                initial={{ opacity: 0, scale: 0.5 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/jbb-hNum98ZkRGwl7FAw.gif" 
+                className="w-48 md:w-80 drop-shadow-2xl rounded-3xl" 
+                alt="Jellybean Evolution GIF" 
               />
               <motion.img 
                 animate={{ y: [0, -20, 0], rotate: [0, -5, 0] }}
@@ -282,17 +291,15 @@ export default function App() {
                 alt="" 
               />
             </div>
-
-            <motion.img 
-              initial={{ opacity: 0, scale: 0.5 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/jbb-hNum98ZkRGwl7FAw.gif" 
-              className="w-48 md:w-96 mt-12 drop-shadow-2xl rounded-3xl border-4 border-white/20" 
-              alt="Jellybean Evolution GIF" 
-            />
           </div>
         </motion.div>
       </section>
+
+      {/* Meme Generator Section */}
+      <MemeGenerator />
+
+      {/* Community Meme Wall Section */}
+      <MemeWall />
 
       {/* Transition Image */}
       <div className="w-full flex flex-col items-center py-20 z-10 relative">
