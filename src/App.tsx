@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
-import { motion, useScroll, useTransform, useSpring } from 'motion/react';
-import { Copy, Check, Wallet, ShoppingCart, Repeat, CheckCircle2, ChevronDown } from 'lucide-react';
+import { motion, useScroll, useTransform, useSpring, AnimatePresence } from 'motion/react';
+import { Copy, Check, Wallet, ShoppingCart, Repeat, CheckCircle2, ChevronDown, X } from 'lucide-react';
 import MemeGenerator from './components/MemeGenerator';
 import MemeWall from './components/MemeWall';
 import JellybeanGame from './components/JellybeanGame';
@@ -22,6 +22,8 @@ export default function App() {
   
   const springHippoY = useSpring(hippoY, { stiffness: 100, damping: 30 });
 
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   const copyToClipboard = () => {
     navigator.clipboard.writeText(CONTRACT_ADDRESS);
     setCopied(true);
@@ -36,29 +38,30 @@ export default function App() {
   return (
     <div className="min-h-screen overflow-x-hidden relative" ref={containerRef}>
       {/* Navigation Header */}
-      <header className="fixed top-0 left-0 w-full z-[100] bg-black/20 backdrop-blur-xl border-b border-white/10 px-4 py-3">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      <header className="fixed top-0 left-0 w-full z-[100] bg-black/40 backdrop-blur-xl border-b border-white/10 px-4 py-3">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <motion.img 
               src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jelly/jb-u2ER0qtvUZv5BNsu.png" 
               alt="Logo" 
-              className="h-8 md:h-10 cursor-pointer"
+              className="h-8 md:h-12 cursor-pointer"
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
               whileHover={{ scale: 1.1 }}
               referrerPolicy="no-referrer"
             />
-            <div className="hidden lg:flex items-center bg-white/5 border border-white/10 rounded-full px-4 py-1.5 gap-3 group cursor-pointer hover:bg-white/10 transition-all" onClick={copyToClipboard}>
-              <span className="text-[10px] text-white/40 font-black uppercase tracking-widest">CA:</span>
-              <code className="text-xs text-white/80 font-mono font-bold truncate max-w-[120px] md:max-w-none">
+            <div className="hidden sm:flex items-center bg-white/5 border border-white/10 rounded-full px-3 py-1.5 gap-2 group cursor-pointer hover:bg-white/10 transition-all" onClick={copyToClipboard}>
+              <span className="text-[8px] md:text-[10px] text-white/40 font-black uppercase tracking-widest">CA:</span>
+              <code className="text-[10px] md:text-xs text-white/80 font-mono font-bold truncate max-w-[80px] md:max-w-none">
                 {CONTRACT_ADDRESS}
               </code>
               <div className="text-yellow-400 group-hover:scale-110 transition-transform">
-                {copied ? <Check size={14} /> : <Copy size={14} />}
+                {copied ? <Check size={12} /> : <Copy size={12} />}
               </div>
             </div>
           </div>
 
-          <nav className="flex items-center gap-2 md:gap-6 overflow-x-auto no-scrollbar w-full md:w-auto justify-center">
+          {/* Desktop Nav */}
+          <nav className="hidden md:flex items-center gap-1 lg:gap-4">
             {[
               { name: 'Home', id: 'home' },
               { name: 'About', id: 'about' },
@@ -70,24 +73,87 @@ export default function App() {
               <button
                 key={link.id}
                 onClick={() => document.getElementById(link.id)?.scrollIntoView({ behavior: 'smooth' })}
-                className="text-[10px] md:text-xs font-black text-white/60 hover:text-white uppercase tracking-widest px-3 py-2 rounded-full hover:bg-white/5 transition-all whitespace-nowrap"
+                className="text-[10px] lg:text-xs font-black text-white/60 hover:text-white uppercase tracking-widest px-3 py-2 rounded-full hover:bg-white/5 transition-all whitespace-nowrap"
               >
                 {link.name}
               </button>
             ))}
           </nav>
 
-          <div className="hidden md:flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <motion.a 
               href="https://dexscreener.com/solana/2jbxebefzmnzgmp8frhsujjqqzudlhjzwbjvh7vbw7df"
               target="_blank"
-              className="bg-yellow-400 text-black text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-widest hover:scale-105 transition-transform"
+              className="hidden sm:block bg-yellow-400 text-black text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-widest hover:scale-105 transition-transform"
               whileTap={{ scale: 0.95 }}
             >
               Buy Now
             </motion.a>
+            
+            {/* Mobile Menu Toggle */}
+            <button 
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="md:hidden p-2 text-white/60 hover:text-white transition-colors"
+            >
+              {isMenuOpen ? <X size={24} /> : (
+                <div className="space-y-1.5">
+                  <div className="w-6 h-0.5 bg-current" />
+                  <div className="w-6 h-0.5 bg-current" />
+                  <div className="w-4 h-0.5 bg-current ml-auto" />
+                </div>
+              )}
+            </button>
           </div>
         </div>
+
+        {/* Mobile Menu Overlay */}
+        <AnimatePresence>
+          {isMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="md:hidden bg-black/90 backdrop-blur-2xl border-t border-white/10 overflow-hidden"
+            >
+              <div className="flex flex-col p-6 gap-4">
+                {[
+                  { name: 'Home', id: 'home' },
+                  { name: 'About', id: 'about' },
+                  { name: 'Memes', id: 'memes' },
+                  { name: 'Game', id: 'game' },
+                  { name: 'Buy', id: 'buy' },
+                  { name: 'Roadmap', id: 'roadmap' }
+                ].map((link) => (
+                  <button
+                    key={link.id}
+                    onClick={() => {
+                      document.getElementById(link.id)?.scrollIntoView({ behavior: 'smooth' });
+                      setIsMenuOpen(false);
+                    }}
+                    className="text-left text-lg font-black text-white/60 hover:text-white uppercase tracking-[0.2em] py-2 border-b border-white/5"
+                  >
+                    {link.name}
+                  </button>
+                ))}
+                <div className="flex flex-col gap-4 mt-4">
+                  <div className="flex items-center justify-between bg-white/5 rounded-2xl p-4 border border-white/10" onClick={copyToClipboard}>
+                    <code className="text-[10px] text-white/60 font-mono truncate mr-4">{CONTRACT_ADDRESS}</code>
+                    <div className="text-yellow-400">
+                      {copied ? <Check size={16} /> : <Copy size={16} />}
+                    </div>
+                  </div>
+                  <a 
+                    href="https://dexscreener.com/solana/2jbxebefzmnzgmp8frhsujjqqzudlhjzwbjvh7vbw7df"
+                    target="_blank"
+                    className="bg-yellow-400 text-black text-center font-black py-4 rounded-2xl uppercase tracking-widest"
+                  >
+                    Buy $JELLYBEAN
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
       {/* Floating Decorative Jellybeans - Enhanced Rain Effect */}
@@ -164,27 +230,27 @@ export default function App() {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8, duration: 0.8 }}
-            className="space-y-6 mb-20 relative z-30"
+            className="space-y-4 md:space-y-6 mb-12 md:mb-20 relative z-30"
           >
             <motion.div 
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 1.2, type: "spring" }}
-              className="inline-block px-8 py-3 bg-white/10 backdrop-blur-md border-2 border-white/20 rounded-full mb-6 shadow-2xl"
+              className="inline-block px-6 md:px-8 py-2 md:py-3 bg-white/10 backdrop-blur-md border-2 border-white/20 rounded-full mb-4 md:mb-6 shadow-2xl"
             >
-              <span className="text-white font-black tracking-[0.4em] uppercase text-xs md:text-sm">The Next Generation of Memes</span>
+              <span className="text-white font-black tracking-[0.2em] md:tracking-[0.4em] uppercase text-[10px] md:text-sm">The Next Generation of Memes</span>
             </motion.div>
-            <h1 className="font-museo text-5xl md:text-8xl text-white font-black tracking-tighter leading-none uppercase italic drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+            <h1 className="font-museo text-4xl sm:text-6xl md:text-8xl text-white font-black tracking-tighter leading-none uppercase italic drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
               The next viral <br className="hidden md:block" /> baby hippo
             </h1>
-            <p className="font-museo text-2xl md:text-4xl text-yellow-300 font-black tracking-widest uppercase drop-shadow-lg">
+            <p className="font-museo text-lg sm:text-2xl md:text-4xl text-yellow-300 font-black tracking-widest uppercase drop-shadow-lg">
               Born in America. Raised on the Blockchain.
             </p>
           </motion.div>
 
           {/* Character Section with more layers */}
-          <div className="relative w-full max-w-5xl flex justify-center items-center mb-24">
-            <div className="absolute inset-0 bg-gradient-to-r from-pink-500/20 via-purple-500/20 to-pink-500/20 blur-[180px] rounded-full scale-110 animate-pulse" />
+          <div className="relative w-full max-w-5xl flex justify-center items-center mb-12 md:mb-24">
+            <div className="absolute inset-0 bg-gradient-to-r from-pink-500/20 via-purple-500/20 to-pink-500/20 blur-[100px] md:blur-[180px] rounded-full scale-110 animate-pulse" />
             
             <motion.div
               className="relative z-20"
@@ -196,7 +262,7 @@ export default function App() {
                 style={{ y: springHippoY, scale: hippoScale, rotate: hippoRotate }}
                 src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jelly/jellybean-4VcIIo9lkb3iyhLx.webp" 
                 alt="Jellybean Character" 
-                className="w-80 md:w-[750px] drop-shadow-[0_0_120px_rgba(255,255,255,0.6)]"
+                className="w-64 sm:w-80 md:w-[750px] drop-shadow-[0_0_60px_md:0_0_120px_rgba(255,255,255,0.6)]"
                 whileHover={{ scale: 1.08, rotate: 3 }}
                 referrerPolicy="no-referrer"
               />
@@ -208,12 +274,12 @@ export default function App() {
             initial={{ opacity: 0, y: 60 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.4, duration: 0.8 }}
-            className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16 mb-24 relative z-40"
+            className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-16 mb-12 md:mb-24 relative z-40 w-full px-4"
           >
             <motion.a 
               href="https://dexscreener.com/solana/2jbxebefzmnzgmp8frhsujjqqzudlhjzwbjvh7vbw7df"
               target="_blank"
-              className="block w-80 md:w-[450px] relative group"
+              className="block w-full max-w-[320px] md:max-w-[450px] relative group"
               whileHover={{ scale: 1.05, y: -10 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -229,7 +295,7 @@ export default function App() {
             <motion.a 
               href="https://x.com/i/communities/2026237091508543653"
               target="_blank"
-              className="block w-80 md:w-[450px] relative group"
+              className="block w-full max-w-[320px] md:max-w-[450px] relative group"
               whileHover={{ scale: 1.05, y: -10 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -268,23 +334,23 @@ export default function App() {
       </div>
 
       {/* 2. MANIFESTO SECTION */}
-      <section id="about" className="w-full py-32 px-4 flex flex-col items-center z-10 relative">
+      <section id="about" className="w-full py-16 md:py-32 px-4 flex flex-col items-center z-10 relative">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-full bg-pink-500/5 blur-[120px] rounded-full pointer-events-none" />
         
         <motion.div 
-          className="text-center mb-16 relative"
+          className="text-center mb-12 md:mb-16 relative"
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
         >
-          <h2 className="font-museo text-6xl md:text-9xl text-white font-black uppercase tracking-tighter mb-2 drop-shadow-[0_10px_20px_rgba(0,0,0,0.4)]">
+          <h2 className="font-museo text-5xl sm:text-7xl md:text-9xl text-white font-black uppercase tracking-tighter mb-2 drop-shadow-[0_10px_20px_rgba(0,0,0,0.4)]">
             EVOLUTION
           </h2>
-          <p className="font-museo text-2xl md:text-5xl text-yellow-300 uppercase font-black tracking-[0.2em] drop-shadow-glow">IS INEVITABLE</p>
+          <p className="font-museo text-xl sm:text-3xl md:text-5xl text-yellow-300 uppercase font-black tracking-[0.1em] md:tracking-[0.2em] drop-shadow-glow">IS INEVITABLE</p>
         </motion.div>
 
         <motion.div 
-          className="pink-box w-full max-w-6xl p-12 md:p-20 relative overflow-hidden group"
+          className="pink-box w-full max-w-6xl p-6 sm:p-12 md:p-20 relative overflow-hidden group"
           initial={{ opacity: 0, scale: 0.9, y: 50 }}
           whileInView={{ opacity: 1, scale: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
@@ -300,50 +366,50 @@ export default function App() {
             className="absolute top-0 right-0 w-64 h-64 bg-white/20 rounded-full blur-3xl"
           />
           
-          <img src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/jellybean-1-0ni0BiSWV1vCVkaU.png" className="absolute -bottom-10 -left-10 w-72 opacity-10 rotate-12 pointer-events-none group-hover:rotate-45 transition-transform duration-1000" alt="" />
-          <img src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/jellybean-1-0ni0BiSWV1vCVkaU.png" className="absolute -top-10 -right-10 w-72 opacity-10 -rotate-12 pointer-events-none group-hover:-rotate-45 transition-transform duration-1000" alt="" />
+          <img src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/jellybean-1-0ni0BiSWV1vCVkaU.png" className="absolute -bottom-10 -left-10 w-48 md:w-72 opacity-10 rotate-12 pointer-events-none group-hover:rotate-45 transition-transform duration-1000" alt="" />
+          <img src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/jellybean-1-0ni0BiSWV1vCVkaU.png" className="absolute -top-10 -right-10 w-48 md:w-72 opacity-10 -rotate-12 pointer-events-none group-hover:-rotate-45 transition-transform duration-1000" alt="" />
 
           <div className="relative z-10 flex flex-col items-center text-center">
-            <h3 className="font-museo text-6xl md:text-8xl text-white mb-12 drop-shadow-2xl font-black italic tracking-tighter">WHY JELLYBEAN?</h3>
+            <h3 className="font-museo text-4xl sm:text-6xl md:text-8xl text-white mb-8 md:mb-12 drop-shadow-2xl font-black italic tracking-tighter">WHY JELLYBEAN?</h3>
             
-            <div className="space-y-8 text-2xl md:text-3xl font-bold text-white leading-relaxed">
+            <div className="space-y-6 md:space-y-8 text-lg sm:text-2xl md:text-3xl font-bold text-white leading-relaxed">
               <p className="hover:text-yellow-200 transition-all hover:scale-105 cursor-default">Because the world doesn't need another serious coin.</p>
               <p className="hover:text-yellow-200 transition-all hover:scale-105 cursor-default">It needs a baby hippo.</p>
               <p className="hover:text-yellow-200 transition-all hover:scale-105 cursor-default">Cute enough to go viral.</p>
               <p className="hover:text-yellow-200 transition-all hover:scale-105 cursor-default">Strong enough to stampede.</p>
-              <div className="py-12">
+              <div className="py-8 md:py-12">
                 <motion.p 
                   animate={{ scale: [1, 1.1, 1] }}
                   transition={{ duration: 2, repeat: Infinity }}
-                  className="text-5xl md:text-8xl font-museo text-yellow-300 drop-shadow-glow italic font-black"
+                  className="text-4xl sm:text-6xl md:text-8xl font-museo text-yellow-300 drop-shadow-glow italic font-black"
                 >
                   $JELLYBEAN
                 </motion.p>
-                <p className="text-3xl md:text-4xl font-museo opacity-80 mt-4 italic">isn't here to explain itself.</p>
+                <p className="text-xl sm:text-3xl md:text-4xl font-museo opacity-80 mt-4 italic">isn't here to explain itself.</p>
               </div>
-              <p className="text-4xl md:text-6xl font-museo text-white drop-shadow-2xl italic font-black">It's here to take over timelines.</p>
+              <p className="text-2xl sm:text-4xl md:text-6xl font-museo text-white drop-shadow-2xl italic font-black">It's here to take over timelines.</p>
             </div>
 
-            <div className="flex flex-col md:flex-row items-center justify-between w-full mt-20 px-4 gap-8">
+            <div className="flex flex-col md:flex-row items-center justify-between w-full mt-12 md:mt-20 px-4 gap-8">
               <motion.img 
                 animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }}
                 transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
                 src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/jellybean-1-0ni0BiSWV1vCVkaU.png" 
-                className="w-40 md:w-64 drop-shadow-2xl" 
+                className="w-32 md:w-64 drop-shadow-2xl" 
                 alt="" 
               />
               <motion.img 
                 initial={{ opacity: 0, scale: 0.5 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/jbb-hNum98ZkRGwl7FAw.gif" 
-                className="w-48 md:w-80 drop-shadow-2xl rounded-3xl" 
+                className="w-40 md:w-80 drop-shadow-2xl rounded-2xl md:rounded-3xl" 
                 alt="Jellybean Evolution GIF" 
               />
               <motion.img 
                 animate={{ y: [0, -20, 0], rotate: [0, -5, 0] }}
                 transition={{ repeat: Infinity, duration: 4, ease: "easeInOut", delay: 2 }}
                 src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/jellybean-1-0ni0BiSWV1vCVkaU.png" 
-                className="w-40 md:w-64 scale-x-[-1] drop-shadow-2xl" 
+                className="w-32 md:w-64 scale-x-[-1] drop-shadow-2xl" 
                 alt="" 
               />
             </div>
@@ -387,9 +453,9 @@ export default function App() {
       </section>
 
       {/* 4. HOW TO BUY SECTION */}
-      <section id="buy" className="w-full py-32 px-4 flex flex-col items-center z-10 scroll-mt-20">
+      <section id="buy" className="w-full py-16 md:py-32 px-4 flex flex-col items-center z-10 scroll-mt-20">
         <motion.h2 
-          className="font-museo text-6xl md:text-9xl text-white mb-20 text-center drop-shadow-2xl font-black italic"
+          className="font-museo text-4xl sm:text-6xl md:text-9xl text-white mb-12 md:mb-20 text-center drop-shadow-2xl font-black italic"
           initial={{ opacity: 0, scale: 0.8 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
@@ -397,7 +463,7 @@ export default function App() {
           How To Buy
         </motion.h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 w-full max-w-7xl mb-24">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 w-full max-w-7xl mb-16 md:mb-24">
           {[
             { step: 1, title: "Get a Wallet", icon: <Wallet size={48} />, color: "bg-purple-400", desc: "Download Phantom or Solflare" },
             { step: 2, title: "Get Some SOL", icon: <ShoppingCart size={48} />, color: "bg-pink-400", desc: "Buy SOL on an exchange" },
@@ -406,57 +472,57 @@ export default function App() {
           ].map((item, i) => (
             <motion.div 
               key={item.step} 
-              className="bg-white/10 backdrop-blur-xl rounded-[3rem] p-10 flex flex-col items-center text-center shadow-2xl relative group border border-white/20"
+              className="bg-white/10 backdrop-blur-xl rounded-[2.5rem] md:rounded-[3rem] p-8 md:p-10 flex flex-col items-center text-center shadow-2xl relative group border border-white/20"
               whileHover={{ y: -15, scale: 1.02, backgroundColor: "rgba(255,255,255,0.15)" }}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1, type: "spring" }}
             >
-              <div className={`absolute -top-6 -left-6 w-16 h-16 ${item.color} text-white rounded-full flex items-center justify-center font-museo text-3xl shadow-xl border-4 border-white z-20`}>
+              <div className={`absolute -top-4 -left-4 md:-top-6 md:-left-6 w-12 h-12 md:w-16 md:h-16 ${item.color} text-white rounded-full flex items-center justify-center font-museo text-2xl md:text-3xl shadow-xl border-4 border-white z-20`}>
                 {item.step}
               </div>
-              <div className="text-white/40 mb-8 group-hover:text-yellow-400 transition-colors duration-300 scale-125 relative z-10">
+              <div className="text-white/40 mb-6 md:mb-8 group-hover:text-yellow-400 transition-colors duration-300 scale-110 md:scale-125 relative z-10">
                 {item.icon}
               </div>
-              <h3 className="text-2xl font-black text-white mb-4 leading-tight relative z-10">{item.title}</h3>
-              <p className="text-white/60 font-bold mb-6 relative z-10">{item.desc}</p>
-              <img src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/jellybean-1-0ni0BiSWV1vCVkaU.png" className="w-20 mt-auto opacity-20 group-hover:opacity-100 transition-opacity duration-500 relative z-10" alt="" />
+              <h3 className="text-xl md:text-2xl font-black text-white mb-3 md:mb-4 leading-tight relative z-10">{item.title}</h3>
+              <p className="text-sm md:text-base text-white/60 font-bold mb-6 relative z-10">{item.desc}</p>
+              <img src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/jellybean-1-0ni0BiSWV1vCVkaU.png" className="w-16 md:w-20 mt-auto opacity-20 group-hover:opacity-100 transition-opacity duration-500 relative z-10" alt="" />
               
               {/* Hover Glow */}
-              <div className={`absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity rounded-[3rem] blur-2xl ${item.color}`} />
+              <div className={`absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity rounded-[2.5rem] md:rounded-[3rem] blur-2xl ${item.color}`} />
             </motion.div>
           ))}
         </div>
 
         {/* Official Contract Box */}
         <motion.div 
-          className="w-full max-w-5xl bg-purple-600/90 backdrop-blur-xl rounded-[3rem] p-10 md:p-16 flex flex-col items-center text-center shadow-[0_20px_50px_rgba(0,0,0,0.4)] border-4 border-white/20"
+          className="w-full max-w-5xl bg-purple-600/90 backdrop-blur-xl rounded-[2rem] md:rounded-[3rem] p-6 md:p-16 flex flex-col items-center text-center shadow-[0_20px_50px_rgba(0,0,0,0.4)] border-2 md:border-4 border-white/20"
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <h3 className="text-3xl md:text-5xl font-black text-white mb-4 italic uppercase tracking-tighter">Official Contract</h3>
-          <p className="text-pink-200 font-black text-xl mb-10 flex items-center gap-3 uppercase tracking-widest">
-            <CheckCircle2 size={24} className="text-green-400" /> Solana Verified & Audited
+          <h3 className="text-2xl md:text-5xl font-black text-white mb-4 italic uppercase tracking-tighter">Official Contract</h3>
+          <p className="text-pink-200 font-black text-sm md:text-xl mb-6 md:mb-10 flex items-center gap-3 uppercase tracking-widest">
+            <CheckCircle2 size={20} className="text-green-400" /> Solana Verified & Audited
           </p>
           
           <div 
             onClick={copyToClipboard}
-            className="w-full bg-black/30 border-2 border-white/10 rounded-3xl p-6 md:p-8 flex items-center justify-between cursor-pointer hover:bg-black/40 transition-all group overflow-hidden shadow-inner"
+            className="w-full bg-black/30 border-2 border-white/10 rounded-2xl md:rounded-3xl p-4 md:p-8 flex items-center justify-between cursor-pointer hover:bg-black/40 transition-all group overflow-hidden shadow-inner"
           >
-            <code className="font-mono text-sm md:text-2xl text-white/90 break-all text-left font-bold">
+            <code className="font-mono text-[10px] sm:text-sm md:text-2xl text-white/90 break-all text-left font-bold">
               {CONTRACT_ADDRESS}
             </code>
-            <div className="flex-shrink-0 ml-6 bg-yellow-400 text-black p-4 rounded-2xl shadow-lg group-hover:scale-110 transition-transform group-active:scale-95">
-              {copied ? <Check size={32} /> : <Copy size={32} />}
+            <div className="flex-shrink-0 ml-4 md:ml-6 bg-yellow-400 text-black p-3 md:p-4 rounded-xl md:rounded-2xl shadow-lg group-hover:scale-110 transition-transform group-active:scale-95">
+              {copied ? <Check size={20} className="md:w-8 md:h-8" /> : <Copy size={20} className="md:w-8 md:h-8" />}
             </div>
           </div>
           {copied && (
             <motion.p 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mt-6 text-green-400 font-black text-xl uppercase tracking-widest"
+              className="mt-4 md:mt-6 text-green-400 font-black text-base md:text-xl uppercase tracking-widest"
             >
               Copied to clipboard!
             </motion.p>
@@ -465,20 +531,20 @@ export default function App() {
       </section>
 
       {/* 5. ROADMAP SECTION (THE STAMPEDE) */}
-      <section id="roadmap" className="w-full py-32 px-4 flex flex-col items-center z-10 relative scroll-mt-20">
+      <section id="roadmap" className="w-full py-16 md:py-32 px-4 flex flex-col items-center z-10 relative scroll-mt-20">
         <motion.div 
-          className="text-center mb-20"
+          className="text-center mb-12 md:mb-20"
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <h2 className="font-museo text-6xl md:text-9xl text-white font-black uppercase tracking-tighter mb-2 drop-shadow-2xl italic">
+          <h2 className="font-museo text-5xl sm:text-7xl md:text-9xl text-white font-black uppercase tracking-tighter mb-2 drop-shadow-2xl italic">
             THE STAMPEDE
           </h2>
-          <p className="font-museo text-2xl md:text-4xl text-yellow-300 uppercase font-black tracking-widest drop-shadow-glow">OUR PATH TO GLORY</p>
+          <p className="font-museo text-xl sm:text-2xl md:text-4xl text-yellow-300 uppercase font-black tracking-widest drop-shadow-glow">OUR PATH TO GLORY</p>
         </motion.div>
 
-        <div className="w-full max-w-5xl space-y-12 relative">
+        <div className="w-full max-w-5xl space-y-8 md:space-y-12 relative">
           {/* Connecting Line */}
           <div className="absolute left-12 md:left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-pink-500 via-purple-500 to-yellow-400 opacity-20 hidden md:block" />
 
@@ -493,42 +559,42 @@ export default function App() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, type: "spring" }}
-              className={`bg-white/10 backdrop-blur-xl border border-white/20 p-8 md:p-12 rounded-[3.5rem] flex flex-col md:flex-row items-center gap-8 group hover:bg-white/20 transition-all relative ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}
+              className={`bg-white/10 backdrop-blur-xl border border-white/20 p-6 md:p-12 rounded-[2.5rem] md:rounded-[3.5rem] flex flex-col md:flex-row items-center gap-6 md:gap-8 group hover:bg-white/20 transition-all relative ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}
             >
-              <div className={`w-24 h-24 ${item.color} rounded-full flex items-center justify-center font-museo text-4xl font-black text-white shadow-2xl group-hover:scale-110 transition-transform relative z-10 border-4 border-white`}>
+              <div className={`w-16 h-16 md:w-24 md:h-24 ${item.color} rounded-full flex items-center justify-center font-museo text-2xl md:text-4xl font-black text-white shadow-2xl group-hover:scale-110 transition-transform relative z-10 border-4 border-white`}>
                 {i + 1}
               </div>
               <div className={`flex-1 text-center ${i % 2 === 0 ? 'md:text-left' : 'md:text-right'}`}>
-                <h3 className="text-3xl md:text-5xl font-black text-white mb-6 italic uppercase tracking-tighter drop-shadow-md">{item.phase}</h3>
-                <div className={`flex flex-wrap justify-center ${i % 2 === 0 ? 'md:justify-start' : 'md:justify-end'} gap-3`}>
+                <h3 className="text-2xl md:text-5xl font-black text-white mb-4 md:mb-6 italic uppercase tracking-tighter drop-shadow-md">{item.phase}</h3>
+                <div className={`flex flex-wrap justify-center ${i % 2 === 0 ? 'md:justify-start' : 'md:justify-end'} gap-2 md:gap-3`}>
                   {item.items.map((li, j) => (
-                    <span key={j} className="px-6 py-3 bg-black/30 rounded-full text-white font-black text-sm uppercase tracking-widest border border-white/10 hover:bg-black/50 transition-colors shadow-lg">
+                    <span key={j} className="px-4 md:px-6 py-2 md:py-3 bg-black/30 rounded-full text-white font-black text-[10px] md:text-sm uppercase tracking-widest border border-white/10 hover:bg-black/50 transition-colors shadow-lg">
                       {li}
                     </span>
                   ))}
                 </div>
               </div>
-              <img src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/jellybean-1-0ni0BiSWV1vCVkaU.png" className={`w-32 opacity-20 group-hover:opacity-100 transition-opacity hidden md:block ${i % 2 === 0 ? 'rotate-12' : '-rotate-12'}`} alt="" />
+              <img src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/jellybean-1-0ni0BiSWV1vCVkaU.png" className={`w-24 md:w-32 opacity-20 group-hover:opacity-100 transition-opacity hidden md:block ${i % 2 === 0 ? 'rotate-12' : '-rotate-12'}`} alt="" />
             </motion.div>
           ))}
         </div>
       </section>
 
       {/* 6. FOOTER */}
-      <footer className="w-full py-32 px-4 flex flex-col items-center text-center z-10 bg-black/20 backdrop-blur-md">
+      <footer className="w-full py-16 md:py-32 px-4 flex flex-col items-center text-center z-10 bg-black/20 backdrop-blur-md">
         <motion.img 
           src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jelly/jb-u2ER0qtvUZv5BNsu.png" 
           alt="Jellybean Logo" 
-          className="w-64 md:w-[500px] mb-12 drop-shadow-glow"
+          className="w-48 sm:w-64 md:w-[500px] mb-8 md:mb-12 drop-shadow-glow"
           whileHover={{ scale: 1.05, rotate: [0, -2, 2, 0] }}
           referrerPolicy="no-referrer"
         />
-        <div className="flex flex-wrap justify-center gap-6 md:gap-12 mb-12">
+        <div className="flex flex-wrap justify-center gap-4 md:gap-12 mb-8 md:mb-12">
           <motion.a 
             whileHover={{ scale: 1.05, y: -5 }} 
             href="https://x.com/i/communities/2026237091508543653" 
             target="_blank"
-            className="w-48 md:w-64"
+            className="w-32 sm:w-48 md:w-64"
           >
             <img 
               src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/chatgpt-image-feb-17-2026-03_04_48-am-efGETjOsrf2Xc3da(2).png" 
@@ -541,7 +607,7 @@ export default function App() {
             whileHover={{ scale: 1.05, y: -5 }} 
             href="https://www.tiktok.com/@wildlifeworldzoo" 
             target="_blank"
-            className="w-48 md:w-64"
+            className="w-32 sm:w-48 md:w-64"
           >
             <img 
               src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/chatgpt-image-feb-17-2026-03_06_19-am-jBA71RT0BVNEcD9w(1).png" 
@@ -554,7 +620,7 @@ export default function App() {
             whileHover={{ scale: 1.05, y: -5 }} 
             href="https://www.instagram.com/wildlifeworldzoo/" 
             target="_blank"
-            className="w-48 md:w-64"
+            className="w-32 sm:w-48 md:w-64"
           >
             <img 
               src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/insta-h8tbII9WDpiQH25K(1).png" 
@@ -564,9 +630,9 @@ export default function App() {
             />
           </motion.a>
         </div>
-        <p className="text-white/40 mb-12 font-bold uppercase tracking-[0.5em]">©2026 Jellybean World</p>
-        <div className="max-w-4xl p-10 bg-white/5 backdrop-blur-xl rounded-[2.5rem] border border-white/10 shadow-2xl">
-          <p className="text-xs md:text-sm text-white/30 uppercase tracking-[0.2em] leading-relaxed font-bold">
+        <p className="text-white/40 mb-8 md:mb-12 font-bold uppercase tracking-[0.3em] md:tracking-[0.5em] text-[10px] md:text-sm">©2026 Jellybean World</p>
+        <div className="max-w-4xl p-6 md:p-10 bg-white/5 backdrop-blur-xl rounded-[1.5rem] md:rounded-[2.5rem] border border-white/10 shadow-2xl">
+          <p className="text-[10px] md:text-sm text-white/30 uppercase tracking-[0.1em] md:tracking-[0.2em] leading-relaxed font-bold">
             Disclaimer $ JELLYBEAN is a memecoin with no intrinsic value
           </p>
         </div>

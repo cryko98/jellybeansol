@@ -101,62 +101,62 @@ const MemeGenerator: React.FC = () => {
   return (
     <section id="meme-generator" className="py-24 px-4 relative overflow-hidden bg-black/40">
       <div className="max-w-4xl mx-auto relative z-10">
-        <div className="text-center mb-12">
+        <div className="text-center mb-8 md:mb-12">
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-7xl font-black text-white mb-4 italic uppercase tracking-tighter"
+            className="text-4xl sm:text-5xl md:text-7xl font-black text-white mb-4 italic uppercase tracking-tighter"
           >
             Jellybean <span className="text-pink-500">Meme</span> Lab
           </motion.h2>
-          <p className="text-xl text-white/60 font-medium">Create your own Jellybean adventures with AI!</p>
+          <p className="text-lg md:text-xl text-white/60 font-medium">Create your own Jellybean adventures with AI!</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-start">
           {/* Controls */}
           <motion.div 
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
-            className="bg-white/5 backdrop-blur-xl border border-white/10 p-8 rounded-3xl shadow-2xl"
+            className="bg-white/5 backdrop-blur-xl border border-white/10 p-6 md:p-8 rounded-2xl md:rounded-3xl shadow-2xl"
           >
-            <div className="space-y-6">
+            <div className="space-y-4 md:space-y-6">
               <div>
-                <label className="block text-sm font-bold text-white/60 uppercase tracking-widest mb-3">
+                <label className="block text-[10px] md:text-sm font-bold text-white/60 uppercase tracking-widest mb-2 md:mb-3">
                   What's Jellybean doing?
                 </label>
                 <textarea
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
                   placeholder="e.g. eating a giant watermelon, surfing on a pink cloud, playing video games..."
-                  className="w-full bg-black/40 border border-white/10 rounded-2xl p-4 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-all resize-none h-32"
+                  className="w-full bg-black/40 border border-white/10 rounded-xl md:rounded-2xl p-3 md:p-4 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-pink-500 transition-all resize-none h-24 md:h-32 text-sm md:text-base"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-white/60 uppercase tracking-widest mb-3">
+                <label className="block text-[10px] md:text-sm font-bold text-white/60 uppercase tracking-widest mb-2 md:mb-3">
                   Select Style
                 </label>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-3 md:gap-4">
                   <button
                     onClick={() => setStyle('cartoon')}
-                    className={`py-3 px-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 ${
+                    className={`py-2.5 md:py-3 px-3 md:px-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 text-xs md:text-base ${
                       style === 'cartoon' 
                         ? 'bg-pink-500 text-white shadow-[0_0_20px_rgba(236,72,153,0.4)]' 
                         : 'bg-white/5 text-white/40 hover:bg-white/10'
                     }`}
                   >
-                    <ImageIcon size={18} />
+                    <ImageIcon size={16} className="md:w-[18px] md:h-[18px]" />
                     Cartoon
                   </button>
                   <button
                     onClick={() => setStyle('realistic')}
-                    className={`py-3 px-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 ${
+                    className={`py-2.5 md:py-3 px-3 md:px-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 text-xs md:text-base ${
                       style === 'realistic' 
                         ? 'bg-pink-500 text-white shadow-[0_0_20px_rgba(236,72,153,0.4)]' 
                         : 'bg-white/5 text-white/40 hover:bg-white/10'
                     }`}
                   >
-                    <Sparkles size={18} />
+                    <Sparkles size={16} className="md:w-[18px] md:h-[18px]" />
                     Realistic
                   </button>
                 </div>
@@ -165,16 +165,16 @@ const MemeGenerator: React.FC = () => {
               <button
                 onClick={generateMeme}
                 disabled={loading || !prompt.trim()}
-                className="w-full py-4 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-black text-xl rounded-2xl shadow-xl hover:shadow-pink-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-3"
+                className="w-full py-3.5 md:py-4 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-black text-lg md:text-xl rounded-xl md:rounded-2xl shadow-xl hover:shadow-pink-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-3"
               >
                 {loading ? (
                   <>
-                    <Loader2 className="animate-spin" />
+                    <Loader2 className="animate-spin w-5 h-5 md:w-6 md:h-6" />
                     Generating...
                   </>
                 ) : (
                   <>
-                    <Wand2 />
+                    <Wand2 size={20} className="md:w-6 md:h-6" />
                     Generate Meme
                   </>
                 )}

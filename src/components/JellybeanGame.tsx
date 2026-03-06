@@ -150,7 +150,11 @@ export default function JellybeanGame() {
     }
     
     const relativeX = clientX - rect.left;
-    const newX = Math.max(0, Math.min(GAME_WIDTH - PLAYER_WIDTH, relativeX - PLAYER_WIDTH / 2));
+    // Scale relativeX to GAME_WIDTH
+    const scale = GAME_WIDTH / rect.width;
+    const scaledX = relativeX * scale;
+    
+    const newX = Math.max(0, Math.min(GAME_WIDTH - PLAYER_WIDTH, scaledX - PLAYER_WIDTH / 2));
     targetPlayerX.current = newX;
   };
 
@@ -167,33 +171,33 @@ export default function JellybeanGame() {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 py-12">
-      <div className="text-center mb-8">
-        <h2 className="font-museo text-4xl md:text-6xl text-white font-black uppercase italic tracking-tighter mb-4">
+    <div className="w-full max-w-4xl mx-auto px-4 py-8 md:py-12">
+      <div className="text-center mb-6 md:mb-8">
+        <h2 className="font-museo text-3xl sm:text-4xl md:text-6xl text-white font-black uppercase italic tracking-tighter mb-2 md:mb-4">
           Catch the Jellybeans!
         </h2>
-        <p className="text-yellow-300 font-bold uppercase tracking-widest">
+        <p className="text-yellow-300 font-bold uppercase tracking-widest text-xs md:text-sm">
           Don't let 3 candies drop or it's game over!
         </p>
       </div>
 
       <div 
         ref={gameContainerRef}
-        className="relative w-full aspect-[16/10] bg-black/40 backdrop-blur-xl rounded-[2.5rem] border-4 border-white/20 overflow-hidden cursor-none touch-none shadow-2xl"
+        className="relative w-full aspect-[16/10] bg-black/40 backdrop-blur-xl rounded-[1.5rem] md:rounded-[2.5rem] border-2 md:border-4 border-white/20 overflow-hidden cursor-none touch-none shadow-2xl"
         onMouseMove={handleMouseMove}
         onTouchMove={handleMouseMove}
       >
         {/* Game UI Overlay */}
-        <div className="absolute top-6 left-8 z-30 flex items-center gap-6">
-          <div className="bg-black/50 backdrop-blur-md px-6 py-2 rounded-full border border-white/20">
-            <span className="text-white font-black text-2xl">SCORE: {score}</span>
+        <div className="absolute top-3 left-4 md:top-6 md:left-8 z-30 flex items-center gap-3 md:gap-6">
+          <div className="bg-black/50 backdrop-blur-md px-3 md:px-6 py-1 md:py-2 rounded-full border border-white/20">
+            <span className="text-white font-black text-sm md:text-2xl">SCORE: {score}</span>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-1 md:gap-2">
             {[...Array(3)].map((_, i) => (
               <Heart 
                 key={i} 
-                size={32} 
-                className={`${i < 3 - missed ? 'text-pink-500 fill-pink-500' : 'text-white/20'} transition-colors duration-300`} 
+                size={16} 
+                className={`${i < 3 - missed ? 'text-pink-500 fill-pink-500' : 'text-white/20'} transition-colors duration-300 md:w-8 md:h-8`} 
               />
             ))}
           </div>
