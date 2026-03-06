@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+@theme {
+  --font-museo: "MuseoModerno", system-ui, sans-serif;
+  --font-work: "Work Sans", system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    @apply font-work text-white selection:bg-pink-400 selection:text-white;
+    background-image: url('https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/bvbv-iBaGMbGidJd2swj4.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+  }
+}
+
+@layer utilities {
+  .text-shadow-bubbly {
+    text-shadow: 
+      2px 2px 0px #ff00ff,
+      -2px -2px 0px #00ffff,
+      4px 4px 10px rgba(0, 0, 0, 0.3);
+  }
+  
+  .glass-button {
+    @apply backdrop-blur-md bg-white/20 border border-white/30 shadow-[0_0_20px_rgba(255,255,255,0.3)];
+  }
+
+  .pink-box {
+    @apply bg-gradient-to-br from-pink-400/80 to-purple-500/80 border-4 border-pink-300 rounded-[2rem] shadow-[0_0_40px_rgba(255,100,255,0.4)];
+  }
+
+  .floating {
+    animation: floating 3s ease-in-out infinite;
+  }
+
+  @keyframes floating {
+    0% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(5deg); }
+    100% { transform: translateY(0px) rotate(0deg); }
+  }
+}
