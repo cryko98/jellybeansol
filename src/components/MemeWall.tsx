@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Upload, Image as ImageIcon, X, Loader2, Heart, MessageCircle, Share2 } from 'lucide-react';
+import { Upload, Image as ImageIcon, X, Loader2, Heart, TrendingUp, Clock } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
 interface Meme {
@@ -9,6 +9,7 @@ interface Meme {
   caption: string;
   author: string;
   created_at: string;
+  likes: number;
 }
 
 export default function MemeWall() {
@@ -20,23 +21,36 @@ export default function MemeWall() {
   const [caption, setCaption] = useState('');
   const [author, setAuthor] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-  const isSupabaseConfigured = (import.meta as any).env.VITE_SUPABASE_URL && (import.meta as any).env.VITE_SUPABASE_ANON_KEY;
+  const [sortBy, setSortBy] = useState<'newest' | 'likes'>('newest');
+
+  // Prevent scrolling when modal is open
+  useEffect(() => {
+    if (showUploadModal) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [showUploadModal]);
 
   useEffect(() => {
-    if (isSupabaseConfigured) {
-      fetchMemes();
-    } else {
-      setIsLoading(false);
-    }
-  }, [isSupabaseConfigured]);
+    fetchMemes();
+  }, [sortBy]);
 
   const fetchMemes = async () => {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('memes')
-        .select('*')
-        .order('created_at', { ascending: false });
+      let query = supabase.from('memes').select('*');
+      
+      if (sortBy === 'newest') {
+        query = query.order('created_at', { ascending: false });
+      } else {
+        query = query.order('likes', { ascending: false });
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
       setMemes(data || []);
@@ -44,6 +58,24 @@ export default function MemeWall() {
       console.error('Error fetching memes:', error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleLike = async (memeId: string, currentLikes: number) => {
+    try {
+      const { error } = await supabase
+        .from('memes')
+        .update({ likes: (currentLikes || 0) + 1 })
+        .eq('id', memeId);
+
+      if (error) throw error;
+
+      // Optimistic update
+      setMemes(prev => prev.map(m => 
+        m.id === memeId ? { ...m, likes: (m.likes || 0) + 1 } : m
+      ));
+    } catch (error) {
+      console.error('Error liking meme:', error);
     }
   };
 
@@ -83,7 +115,8 @@ export default function MemeWall() {
           { 
             url: publicUrl, 
             caption, 
-            author: author || 'Anonymous' 
+            author: author || 'Anonymous',
+            likes: 0
           }
         ]);
 
@@ -117,45 +150,42 @@ export default function MemeWall() {
         <h2 className="font-museo text-6xl md:text-8xl text-white font-black uppercase tracking-tighter mb-4 drop-shadow-glow italic">
           COMMUNITY WALL
         </h2>
-        <p className="font-museo text-xl md:text-3xl text-yellow-300 uppercase font-black tracking-widest">SHOW US YOUR JELLYBEANS</p>
+        <p className="font-museo text-xl md:text-3xl text-yellow-300 uppercase font-black tracking-widest mb-12">SHOW US YOUR JELLYBEANS</p>
         
-        <motion.button
-          onClick={() => isSupabaseConfigured && setShowUploadModal(true)}
-          whileHover={isSupabaseConfigured ? { scale: 1.05 } : {}}
-          whileTap={isSupabaseConfigured ? { scale: 0.95 } : {}}
-          className={`mt-12 px-12 py-5 rounded-full font-black text-xl uppercase tracking-widest border-4 border-white flex items-center gap-4 group transition-all ${
-            isSupabaseConfigured 
-              ? "bg-pink-500 text-white shadow-[0_0_30px_rgba(236,72,153,0.5)] cursor-pointer" 
-              : "bg-white/10 text-white/20 border-white/10 cursor-not-allowed"
-          }`}
-        >
-          <Upload className={isSupabaseConfigured ? "group-hover:animate-bounce" : ""} />
-          Upload Meme
-        </motion.button>
+        <div className="flex flex-col md:flex-row items-center justify-center gap-6">
+          <motion.button
+            onClick={() => setShowUploadModal(true)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="px-12 py-5 bg-pink-500 text-white rounded-full font-black text-xl uppercase tracking-widest shadow-[0_0_30px_rgba(236,72,153,0.5)] border-4 border-white flex items-center gap-4 group"
+          >
+            <Upload className="group-hover:animate-bounce" />
+            Upload Meme
+          </motion.button>
+
+          <div className="flex bg-white/5 backdrop-blur-md p-2 rounded-full border border-white/10">
+            <button
+              onClick={() => setSortBy('newest')}
+              className={`px-6 py-3 rounded-full font-black text-sm uppercase tracking-widest transition-all flex items-center gap-2 ${sortBy === 'newest' ? 'bg-white text-black' : 'text-white/40 hover:text-white'}`}
+            >
+              <Clock size={16} />
+              Newest
+            </button>
+            <button
+              onClick={() => setSortBy('likes')}
+              className={`px-6 py-3 rounded-full font-black text-sm uppercase tracking-widest transition-all flex items-center gap-2 ${sortBy === 'likes' ? 'bg-yellow-400 text-black' : 'text-white/40 hover:text-white'}`}
+            >
+              <TrendingUp size={16} />
+              Most Liked
+            </button>
+          </div>
+        </div>
       </motion.div>
 
       {isLoading ? (
         <div className="flex flex-col items-center justify-center py-20">
           <Loader2 className="w-12 h-12 text-pink-500 animate-spin mb-4" />
           <p className="text-white/60 font-bold uppercase tracking-widest">Loading the stampede...</p>
-        </div>
-      ) : !isSupabaseConfigured ? (
-        <div className="bg-white/5 backdrop-blur-xl border-2 border-dashed border-white/20 rounded-[3rem] p-12 text-center max-w-2xl">
-          <Upload className="w-16 h-16 text-white/20 mx-auto mb-6" />
-          <h3 className="text-2xl text-white font-black uppercase mb-4">Configuration Required</h3>
-          <p className="text-white/60 font-bold mb-8">
-            To use the Community Wall, you need to connect your Supabase project. 
-            Please set the <code className="text-pink-400">VITE_SUPABASE_URL</code> and <code className="text-pink-400">VITE_SUPABASE_ANON_KEY</code> environment variables.
-          </p>
-          <div className="flex flex-col gap-4 text-left bg-black/40 p-6 rounded-2xl border border-white/10">
-            <p className="text-xs text-white/40 font-black uppercase tracking-widest">Quick Setup Guide:</p>
-            <ol className="text-sm text-white/80 space-y-2 list-decimal ml-4 font-medium">
-              <li>Create a project at <a href="https://supabase.com" target="_blank" className="text-pink-400 hover:underline">supabase.com</a></li>
-              <li>Create a bucket named <code className="text-yellow-300">memes</code> (Public)</li>
-              <li>Create a table named <code className="text-yellow-300">memes</code> with columns: <code className="text-yellow-300">url, caption, author</code></li>
-              <li>Add your API keys to the environment variables</li>
-            </ol>
-          </div>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 w-full max-w-7xl">
@@ -179,11 +209,14 @@ export default function MemeWall() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
                     <div className="flex items-center justify-between text-white">
-                      <div className="flex gap-4">
-                        <Heart className="w-6 h-6 hover:text-pink-500 cursor-pointer transition-colors" />
-                        <MessageCircle className="w-6 h-6 hover:text-blue-500 cursor-pointer transition-colors" />
-                        <Share2 className="w-6 h-6 hover:text-green-500 cursor-pointer transition-colors" />
-                      </div>
+                      <motion.button 
+                        whileTap={{ scale: 1.5 }}
+                        onClick={() => handleLike(meme.id, meme.likes)}
+                        className="flex items-center gap-2 bg-pink-500 px-4 py-2 rounded-full font-black text-sm shadow-lg hover:bg-pink-400 transition-colors"
+                      >
+                        <Heart className="w-5 h-5 fill-white" />
+                        {meme.likes || 0}
+                      </motion.button>
                     </div>
                   </div>
                 </div>
@@ -193,7 +226,10 @@ export default function MemeWall() {
                   )}
                   <div className="flex items-center justify-between">
                     <span className="text-pink-400 font-black text-sm uppercase tracking-widest">@{meme.author}</span>
-                    <span className="text-white/30 text-xs font-bold">{new Date(meme.created_at).toLocaleDateString()}</span>
+                    <div className="flex items-center gap-1 text-white/30">
+                      <Heart size={12} className={meme.likes > 0 ? "text-pink-500 fill-pink-500" : ""} />
+                      <span className="text-xs font-bold">{meme.likes || 0}</span>
+                    </div>
                   </div>
                 </div>
               </motion.div>

@@ -506,9 +506,7 @@ export default function App() {
         <p className="text-white/40 mb-12 font-bold uppercase tracking-[0.5em]">©2026 Jellybean World</p>
         <div className="max-w-4xl p-10 bg-white/5 backdrop-blur-xl rounded-[2.5rem] border border-white/10 shadow-2xl">
           <p className="text-xs md:text-sm text-white/30 uppercase tracking-[0.2em] leading-relaxed font-bold">
-            Disclaimer: $JELLYBEAN is a memecoin with no intrinsic value, no formal team, and no roadmap. 
-            The coin is completely useless and for entertainment purposes only. 
-            Investing in memecoins involves high risk. Only invest what you can afford to lose.
+            Disclaimer $ JELLYBEAN is a memecoin with no intrinsic value
           </p>
         </div>
       </footer>
