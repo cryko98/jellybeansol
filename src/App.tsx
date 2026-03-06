@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform, useSpring } from 'motion/react';
 import { Copy, Check, Wallet, ShoppingCart, Repeat, CheckCircle2, ChevronDown } from 'lucide-react';
 import MemeGenerator from './components/MemeGenerator';
 import MemeWall from './components/MemeWall';
+import JellybeanGame from './components/JellybeanGame';
 
 const CONTRACT_ADDRESS = '412zDygnwP9DzitnQVgRKUFFTDmrYScFch6P2k39pump';
 
@@ -34,6 +35,61 @@ export default function App() {
 
   return (
     <div className="min-h-screen overflow-x-hidden relative" ref={containerRef}>
+      {/* Navigation Header */}
+      <header className="fixed top-0 left-0 w-full z-[100] bg-black/20 backdrop-blur-xl border-b border-white/10 px-4 py-3">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <motion.img 
+              src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jelly/jb-u2ER0qtvUZv5BNsu.png" 
+              alt="Logo" 
+              className="h-8 md:h-10 cursor-pointer"
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              whileHover={{ scale: 1.1 }}
+              referrerPolicy="no-referrer"
+            />
+            <div className="hidden lg:flex items-center bg-white/5 border border-white/10 rounded-full px-4 py-1.5 gap-3 group cursor-pointer hover:bg-white/10 transition-all" onClick={copyToClipboard}>
+              <span className="text-[10px] text-white/40 font-black uppercase tracking-widest">CA:</span>
+              <code className="text-xs text-white/80 font-mono font-bold truncate max-w-[120px] md:max-w-none">
+                {CONTRACT_ADDRESS}
+              </code>
+              <div className="text-yellow-400 group-hover:scale-110 transition-transform">
+                {copied ? <Check size={14} /> : <Copy size={14} />}
+              </div>
+            </div>
+          </div>
+
+          <nav className="flex items-center gap-2 md:gap-6 overflow-x-auto no-scrollbar w-full md:w-auto justify-center">
+            {[
+              { name: 'Home', id: 'home' },
+              { name: 'About', id: 'about' },
+              { name: 'Memes', id: 'memes' },
+              { name: 'Game', id: 'game' },
+              { name: 'Buy', id: 'buy' },
+              { name: 'Roadmap', id: 'roadmap' }
+            ].map((link) => (
+              <button
+                key={link.id}
+                onClick={() => document.getElementById(link.id)?.scrollIntoView({ behavior: 'smooth' })}
+                className="text-[10px] md:text-xs font-black text-white/60 hover:text-white uppercase tracking-widest px-3 py-2 rounded-full hover:bg-white/5 transition-all whitespace-nowrap"
+              >
+                {link.name}
+              </button>
+            ))}
+          </nav>
+
+          <div className="hidden md:flex items-center gap-4">
+            <motion.a 
+              href="https://dexscreener.com/solana/2jbxebefzmnzgmp8frhsujjqqzudlhjzwbjvh7vbw7df"
+              target="_blank"
+              className="bg-yellow-400 text-black text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-widest hover:scale-105 transition-transform"
+              whileTap={{ scale: 0.95 }}
+            >
+              Buy Now
+            </motion.a>
+          </div>
+        </div>
+      </header>
+
       {/* Floating Decorative Jellybeans - Enhanced Rain Effect */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <img src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/jellybean-1-0ni0BiSWV1vCVkaU.png" className="absolute top-[10%] left-[5%] w-24 floating opacity-40" alt="" />
@@ -46,7 +102,7 @@ export default function App() {
       </div>
 
       {/* 1. HEADER / HERO SECTION */}
-      <section className="relative w-full min-h-screen flex flex-col items-center justify-center pt-20 pb-24 px-4 z-10 overflow-hidden">
+      <section id="home" className="relative w-full min-h-screen flex flex-col items-center justify-center pt-20 pb-24 px-4 z-10 overflow-hidden">
         {/* Complex Background Layers */}
         <div className="absolute inset-0 pointer-events-none">
           <motion.div 
@@ -212,7 +268,7 @@ export default function App() {
       </div>
 
       {/* 2. MANIFESTO SECTION */}
-      <section className="w-full py-32 px-4 flex flex-col items-center z-10 relative">
+      <section id="about" className="w-full py-32 px-4 flex flex-col items-center z-10 relative">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-full bg-pink-500/5 blur-[120px] rounded-full pointer-events-none" />
         
         <motion.div 
@@ -296,10 +352,10 @@ export default function App() {
       </section>
 
       {/* Meme Generator Section */}
-      <MemeGenerator />
-
-      {/* Community Meme Wall Section */}
-      <MemeWall />
+      <div id="memes" className="scroll-mt-20">
+        <MemeGenerator />
+        <MemeWall />
+      </div>
 
       {/* Transition Image */}
       <div className="w-full flex flex-col items-center py-20 z-10 relative">
@@ -325,8 +381,13 @@ export default function App() {
         />
       </div>
 
+      {/* Mini Game Section */}
+      <section id="game" className="w-full py-20 z-10 relative scroll-mt-20">
+        <JellybeanGame />
+      </section>
+
       {/* 4. HOW TO BUY SECTION */}
-      <section className="w-full py-32 px-4 flex flex-col items-center z-10">
+      <section id="buy" className="w-full py-32 px-4 flex flex-col items-center z-10 scroll-mt-20">
         <motion.h2 
           className="font-museo text-6xl md:text-9xl text-white mb-20 text-center drop-shadow-2xl font-black italic"
           initial={{ opacity: 0, scale: 0.8 }}
@@ -340,7 +401,7 @@ export default function App() {
           {[
             { step: 1, title: "Get a Wallet", icon: <Wallet size={48} />, color: "bg-purple-400", desc: "Download Phantom or Solflare" },
             { step: 2, title: "Get Some SOL", icon: <ShoppingCart size={48} />, color: "bg-pink-400", desc: "Buy SOL on an exchange" },
-            { step: 3, title: "Swap For $JELLYBEAN", icon: <Repeat size={48} />, color: "bg-yellow-400", desc: "Swap SOL on Raydium" },
+            { step: 3, title: "Swap For $JELLYBEAN", icon: <Repeat size={48} />, color: "bg-yellow-400", desc: "Swap SOL on pump.fun" },
             { step: 4, title: "Welcome to the Herd", icon: <CheckCircle2 size={48} />, color: "bg-blue-400", desc: "You are now a hippo!" }
           ].map((item, i) => (
             <motion.div 
@@ -404,7 +465,7 @@ export default function App() {
       </section>
 
       {/* 5. ROADMAP SECTION (THE STAMPEDE) */}
-      <section className="w-full py-32 px-4 flex flex-col items-center z-10 relative">
+      <section id="roadmap" className="w-full py-32 px-4 flex flex-col items-center z-10 relative scroll-mt-20">
         <motion.div 
           className="text-center mb-20"
           initial={{ opacity: 0, y: 50 }}
