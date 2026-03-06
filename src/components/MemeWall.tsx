@@ -20,10 +20,15 @@ export default function MemeWall() {
   const [caption, setCaption] = useState('');
   const [author, setAuthor] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const isSupabaseConfigured = (import.meta as any).env.VITE_SUPABASE_URL && (import.meta as any).env.VITE_SUPABASE_ANON_KEY;
 
   useEffect(() => {
-    fetchMemes();
-  }, []);
+    if (isSupabaseConfigured) {
+      fetchMemes();
+    } else {
+      setIsLoading(false);
+    }
+  }, [isSupabaseConfigured]);
 
   const fetchMemes = async () => {
     setIsLoading(true);
@@ -115,12 +120,16 @@ export default function MemeWall() {
         <p className="font-museo text-xl md:text-3xl text-yellow-300 uppercase font-black tracking-widest">SHOW US YOUR JELLYBEANS</p>
         
         <motion.button
-          onClick={() => setShowUploadModal(true)}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="mt-12 px-12 py-5 bg-pink-500 text-white rounded-full font-black text-xl uppercase tracking-widest shadow-[0_0_30px_rgba(236,72,153,0.5)] border-4 border-white flex items-center gap-4 group"
+          onClick={() => isSupabaseConfigured && setShowUploadModal(true)}
+          whileHover={isSupabaseConfigured ? { scale: 1.05 } : {}}
+          whileTap={isSupabaseConfigured ? { scale: 0.95 } : {}}
+          className={`mt-12 px-12 py-5 rounded-full font-black text-xl uppercase tracking-widest border-4 border-white flex items-center gap-4 group transition-all ${
+            isSupabaseConfigured 
+              ? "bg-pink-500 text-white shadow-[0_0_30px_rgba(236,72,153,0.5)] cursor-pointer" 
+              : "bg-white/10 text-white/20 border-white/10 cursor-not-allowed"
+          }`}
         >
-          <Upload className="group-hover:animate-bounce" />
+          <Upload className={isSupabaseConfigured ? "group-hover:animate-bounce" : ""} />
           Upload Meme
         </motion.button>
       </motion.div>
@@ -129,6 +138,24 @@ export default function MemeWall() {
         <div className="flex flex-col items-center justify-center py-20">
           <Loader2 className="w-12 h-12 text-pink-500 animate-spin mb-4" />
           <p className="text-white/60 font-bold uppercase tracking-widest">Loading the stampede...</p>
+        </div>
+      ) : !isSupabaseConfigured ? (
+        <div className="bg-white/5 backdrop-blur-xl border-2 border-dashed border-white/20 rounded-[3rem] p-12 text-center max-w-2xl">
+          <Upload className="w-16 h-16 text-white/20 mx-auto mb-6" />
+          <h3 className="text-2xl text-white font-black uppercase mb-4">Configuration Required</h3>
+          <p className="text-white/60 font-bold mb-8">
+            To use the Community Wall, you need to connect your Supabase project. 
+            Please set the <code className="text-pink-400">VITE_SUPABASE_URL</code> and <code className="text-pink-400">VITE_SUPABASE_ANON_KEY</code> environment variables.
+          </p>
+          <div className="flex flex-col gap-4 text-left bg-black/40 p-6 rounded-2xl border border-white/10">
+            <p className="text-xs text-white/40 font-black uppercase tracking-widest">Quick Setup Guide:</p>
+            <ol className="text-sm text-white/80 space-y-2 list-decimal ml-4 font-medium">
+              <li>Create a project at <a href="https://supabase.com" target="_blank" className="text-pink-400 hover:underline">supabase.com</a></li>
+              <li>Create a bucket named <code className="text-yellow-300">memes</code> (Public)</li>
+              <li>Create a table named <code className="text-yellow-300">memes</code> with columns: <code className="text-yellow-300">url, caption, author</code></li>
+              <li>Add your API keys to the environment variables</li>
+            </ol>
+          </div>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 w-full max-w-7xl">

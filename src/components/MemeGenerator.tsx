@@ -34,7 +34,11 @@ const MemeGenerator: React.FC = () => {
     setError(null);
     
     try {
-      const ai = new GoogleGenAI({ apiKey: (process as any).env.GEMINI_API_KEY });
+      const apiKey = (process as any).env.GEMINI_API_KEY || (process as any).env.API_KEY;
+      if (!apiKey) {
+        throw new Error("API Key is missing. Please set GEMINI_API_KEY or API_KEY in your environment.");
+      }
+      const ai = new GoogleGenAI({ apiKey });
       const base64Data = await getBase64FromUrl(REFERENCE_IMAGE_URL);
       
       const styleInstruction = style === 'cartoon' 
