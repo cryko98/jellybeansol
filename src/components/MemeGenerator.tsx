@@ -109,7 +109,7 @@ const MemeGenerator: React.FC = () => {
           >
             Jellybean <span className="text-pink-500">Meme</span> Lab
           </motion.h2>
-          <p className="text-lg md:text-xl text-white/60 font-medium">Create your own Jellybean adventures with AI!</p>
+          <p className="text-lg md:text-xl text-white/90 font-medium">Create your own Jellybean adventures with AI!</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-start">
@@ -121,7 +121,7 @@ const MemeGenerator: React.FC = () => {
           >
             <div className="space-y-4 md:space-y-6">
               <div>
-                <label className="block text-[10px] md:text-sm font-bold text-white/60 uppercase tracking-widest mb-2 md:mb-3">
+                <label className="block text-[10px] md:text-sm font-bold text-white/90 uppercase tracking-widest mb-2 md:mb-3">
                   What's Jellybean doing?
                 </label>
                 <textarea
@@ -133,7 +133,7 @@ const MemeGenerator: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[10px] md:text-sm font-bold text-white/60 uppercase tracking-widest mb-2 md:mb-3">
+                <label className="block text-[10px] md:text-sm font-bold text-white/90 uppercase tracking-widest mb-2 md:mb-3">
                   Select Style
                 </label>
                 <div className="grid grid-cols-2 gap-3 md:gap-4">
@@ -142,7 +142,7 @@ const MemeGenerator: React.FC = () => {
                     className={`py-2.5 md:py-3 px-3 md:px-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 text-xs md:text-base ${
                       style === 'cartoon' 
                         ? 'bg-pink-500 text-white shadow-[0_0_20px_rgba(236,72,153,0.4)]' 
-                        : 'bg-white/5 text-white/40 hover:bg-white/10'
+                        : 'bg-white/5 text-white/70 hover:bg-white/10'
                     }`}
                   >
                     <ImageIcon size={16} className="md:w-[18px] md:h-[18px]" />
@@ -153,7 +153,7 @@ const MemeGenerator: React.FC = () => {
                     className={`py-2.5 md:py-3 px-3 md:px-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 text-xs md:text-base ${
                       style === 'realistic' 
                         ? 'bg-pink-500 text-white shadow-[0_0_20px_rgba(236,72,153,0.4)]' 
-                        : 'bg-white/5 text-white/40 hover:bg-white/10'
+                        : 'bg-white/5 text-white/70 hover:bg-white/10'
                     }`}
                   >
                     <Sparkles size={16} className="md:w-[18px] md:h-[18px]" />

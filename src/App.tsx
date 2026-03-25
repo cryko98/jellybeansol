@@ -6,9 +6,11 @@ import MemeWall from './components/MemeWall';
 import JellybeanGame from './components/JellybeanGame';
 
 const CONTRACT_ADDRESS = '412zDygnwP9DzitnQVgRKUFFTDmrYScFch6P2k39pump';
+const DONATION_WALLET = '4zSqvAxtpZTPeN8vJzZAFm1UUaCQhf1HtEsRVVqWqMxF';
 
 export default function App() {
   const [copied, setCopied] = useState(false);
+  const [donationCopied, setDonationCopied] = useState(false);
   const containerRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -28,6 +30,12 @@ export default function App() {
     navigator.clipboard.writeText(CONTRACT_ADDRESS);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const copyDonationToClipboard = () => {
+    navigator.clipboard.writeText(DONATION_WALLET);
+    setDonationCopied(true);
+    setTimeout(() => setDonationCopied(false), 2000);
   };
 
   const imageHover = {
@@ -50,8 +58,8 @@ export default function App() {
               referrerPolicy="no-referrer"
             />
             <div className="hidden sm:flex items-center bg-white/5 border border-white/10 rounded-full px-3 py-1.5 gap-2 group cursor-pointer hover:bg-white/10 transition-all" onClick={copyToClipboard}>
-              <span className="text-[8px] md:text-[10px] text-white/40 font-black uppercase tracking-widest">CA:</span>
-              <code className="text-[10px] md:text-xs text-white/80 font-mono font-bold truncate max-w-[80px] md:max-w-none">
+              <span className="text-[8px] md:text-[10px] text-white/90 font-black uppercase tracking-widest">CA:</span>
+              <code className="text-[10px] md:text-xs text-white font-mono font-bold truncate max-w-[80px] md:max-w-none">
                 {CONTRACT_ADDRESS}
               </code>
               <div className="text-yellow-400 group-hover:scale-110 transition-transform">
@@ -73,7 +81,7 @@ export default function App() {
               <button
                 key={link.id}
                 onClick={() => document.getElementById(link.id)?.scrollIntoView({ behavior: 'smooth' })}
-                className="text-[10px] lg:text-xs font-black text-white/60 hover:text-white uppercase tracking-widest px-3 py-2 rounded-full hover:bg-white/5 transition-all whitespace-nowrap"
+                className="text-[10px] lg:text-xs font-black text-white hover:text-white uppercase tracking-widest px-3 py-2 rounded-full hover:bg-white/5 transition-all whitespace-nowrap"
               >
                 {link.name}
               </button>
@@ -93,7 +101,7 @@ export default function App() {
             {/* Mobile Menu Toggle */}
             <button 
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden p-2 text-white/60 hover:text-white transition-colors"
+              className="md:hidden p-2 text-white hover:text-white transition-colors"
             >
               {isMenuOpen ? <X size={24} /> : (
                 <div className="space-y-1.5">
@@ -130,16 +138,29 @@ export default function App() {
                       document.getElementById(link.id)?.scrollIntoView({ behavior: 'smooth' });
                       setIsMenuOpen(false);
                     }}
-                    className="text-left text-lg font-black text-white/60 hover:text-white uppercase tracking-[0.2em] py-2 border-b border-white/5"
+                    className="text-left text-lg font-black text-white hover:text-white uppercase tracking-[0.2em] py-2 border-b border-white/5"
                   >
                     {link.name}
                   </button>
                 ))}
                 <div className="flex flex-col gap-4 mt-4">
-                  <div className="flex items-center justify-between bg-white/5 rounded-2xl p-4 border border-white/10" onClick={copyToClipboard}>
-                    <code className="text-[10px] text-white/60 font-mono truncate mr-4">{CONTRACT_ADDRESS}</code>
-                    <div className="text-yellow-400">
-                      {copied ? <Check size={16} /> : <Copy size={16} />}
+                  <div className="flex flex-col gap-2">
+                    <label className="text-[10px] text-white/90 font-black uppercase tracking-widest ml-2">Contract Address</label>
+                    <div className="flex items-center justify-between bg-white/5 rounded-2xl p-4 border border-white/10" onClick={copyToClipboard}>
+                      <code className="text-[10px] text-white font-mono truncate mr-4">{CONTRACT_ADDRESS}</code>
+                      <div className="text-yellow-400">
+                        {copied ? <Check size={16} /> : <Copy size={16} />}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-2">
+                    <label className="text-[10px] text-white/90 font-black uppercase tracking-widest ml-2">Support the Zoo (USDC)</label>
+                    <div className="flex items-center justify-between bg-white/5 rounded-2xl p-4 border border-white/10" onClick={copyDonationToClipboard}>
+                      <code className="text-[10px] text-white font-mono truncate mr-4">{DONATION_WALLET}</code>
+                      <div className="text-yellow-400">
+                        {donationCopied ? <Check size={16} /> : <Copy size={16} />}
+                      </div>
                     </div>
                   </div>
                   <a 
@@ -168,7 +189,7 @@ export default function App() {
       </div>
 
       {/* 1. HEADER / HERO SECTION */}
-      <section id="home" className="relative w-full min-h-screen flex flex-col items-center justify-center pt-20 pb-24 px-4 z-10 overflow-hidden">
+      <section id="home" className="relative w-full min-h-[100dvh] flex flex-col items-center justify-center pt-20 pb-24 px-4 z-10 overflow-hidden">
         {/* Complex Background Layers */}
         <div className="absolute inset-0 pointer-events-none">
           <motion.div 
@@ -307,6 +328,44 @@ export default function App() {
                 referrerPolicy="no-referrer"
               />
             </motion.a>
+          </motion.div>
+
+          {/* Donation Section */}
+          <motion.div 
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.6, duration: 0.8 }}
+            className="mt-8 md:mt-0 p-6 md:p-8 bg-white/5 backdrop-blur-xl border border-white/10 rounded-[2rem] md:rounded-[3rem] max-w-2xl w-full relative z-40 group hover:bg-white/10 transition-all shadow-2xl mx-auto"
+          >
+            <div className="flex flex-col items-center gap-4">
+              <div className="flex items-center gap-3 text-yellow-300">
+                <Wallet size={24} className="animate-pulse" />
+                <h3 className="font-museo text-lg md:text-2xl font-black uppercase tracking-widest italic">Support the Zoo</h3>
+              </div>
+              <p className="text-white text-[10px] md:text-sm font-bold uppercase tracking-wider leading-relaxed">
+                If you want to support the zoo, you can send USDC to this wallet:
+              </p>
+              <div 
+                onClick={copyDonationToClipboard}
+                className="w-full bg-black/40 border border-white/10 rounded-xl md:rounded-2xl p-3 md:p-4 flex items-center justify-between cursor-pointer hover:bg-black/60 transition-all group/wallet"
+              >
+                <code className="font-mono text-[10px] md:text-sm text-white/90 break-all text-left font-bold">
+                  {DONATION_WALLET}
+                </code>
+                <div className="flex-shrink-0 ml-4 text-yellow-400 group-hover/wallet:scale-110 transition-transform">
+                  {donationCopied ? <Check size={18} /> : <Copy size={18} />}
+                </div>
+              </div>
+              {donationCopied && (
+                <motion.span 
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="text-green-400 text-[10px] md:text-xs font-black uppercase tracking-widest"
+                >
+                  Wallet address copied!
+                </motion.span>
+              )}
+            </div>
           </motion.div>
         </motion.div>
       </section>
@@ -482,12 +541,12 @@ export default function App() {
               <div className={`absolute -top-4 -left-4 md:-top-6 md:-left-6 w-12 h-12 md:w-16 md:h-16 ${item.color} text-white rounded-full flex items-center justify-center font-museo text-2xl md:text-3xl shadow-xl border-4 border-white z-20`}>
                 {item.step}
               </div>
-              <div className="text-white/40 mb-6 md:mb-8 group-hover:text-yellow-400 transition-colors duration-300 scale-110 md:scale-125 relative z-10">
+              <div className="text-white/90 mb-6 md:mb-8 group-hover:text-yellow-400 transition-colors duration-300 scale-110 md:scale-125 relative z-10">
                 {item.icon}
               </div>
               <h3 className="text-xl md:text-2xl font-black text-white mb-3 md:mb-4 leading-tight relative z-10">{item.title}</h3>
-              <p className="text-sm md:text-base text-white/60 font-bold mb-6 relative z-10">{item.desc}</p>
-              <img src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/jellybean-1-0ni0BiSWV1vCVkaU.png" className="w-16 md:w-20 mt-auto opacity-20 group-hover:opacity-100 transition-opacity duration-500 relative z-10" alt="" />
+              <p className="text-sm md:text-base text-white font-bold mb-6 relative z-10">{item.desc}</p>
+              <img src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/jellybean-1-0ni0BiSWV1vCVkaU.png" className="w-16 md:w-20 mt-auto opacity-40 group-hover:opacity-100 transition-opacity duration-500 relative z-10" alt="" />
               
               {/* Hover Glow */}
               <div className={`absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity rounded-[2.5rem] md:rounded-[3rem] blur-2xl ${item.color}`} />
@@ -546,7 +605,7 @@ export default function App() {
 
         <div className="w-full max-w-5xl space-y-8 md:space-y-12 relative">
           {/* Connecting Line */}
-          <div className="absolute left-12 md:left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-pink-500 via-purple-500 to-yellow-400 opacity-20 hidden md:block" />
+          <div className="absolute left-12 md:left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-pink-500 via-purple-500 to-yellow-400 opacity-40 hidden md:block" />
 
           {[
             { phase: "Phase 1: The Birth", items: ["First Wiggle", "Snack Time", "Viral Hippo Noises", "1,000 Hippo Friends"], color: "bg-pink-500" },
@@ -574,7 +633,7 @@ export default function App() {
                   ))}
                 </div>
               </div>
-              <img src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/jellybean-1-0ni0BiSWV1vCVkaU.png" className={`w-24 md:w-32 opacity-20 group-hover:opacity-100 transition-opacity hidden md:block ${i % 2 === 0 ? 'rotate-12' : '-rotate-12'}`} alt="" />
+              <img src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/jellybean-1-0ni0BiSWV1vCVkaU.png" className={`w-24 md:w-32 opacity-40 group-hover:opacity-100 transition-opacity hidden md:block ${i % 2 === 0 ? 'rotate-12' : '-rotate-12'}`} alt="" />
             </motion.div>
           ))}
         </div>
@@ -630,9 +689,9 @@ export default function App() {
             />
           </motion.a>
         </div>
-        <p className="text-white/40 mb-8 md:mb-12 font-bold uppercase tracking-[0.3em] md:tracking-[0.5em] text-[10px] md:text-sm">©2026 Jellybean World</p>
+        <p className="text-white/90 mb-8 md:mb-12 font-bold uppercase tracking-[0.3em] md:tracking-[0.5em] text-[10px] md:text-sm">©2026 Jellybean World</p>
         <div className="max-w-4xl p-6 md:p-10 bg-white/5 backdrop-blur-xl rounded-[1.5rem] md:rounded-[2.5rem] border border-white/10 shadow-2xl">
-          <p className="text-[10px] md:text-sm text-white/30 uppercase tracking-[0.1em] md:tracking-[0.2em] leading-relaxed font-bold">
+          <p className="text-[10px] md:text-sm text-white/80 uppercase tracking-[0.1em] md:tracking-[0.2em] leading-relaxed font-bold">
             Disclaimer $ JELLYBEAN is a memecoin with no intrinsic value
           </p>
         </div>

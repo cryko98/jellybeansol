@@ -295,7 +295,7 @@ export default function JellybeanGame() {
       </div>
       
       <div className="mt-8 flex justify-center">
-        <div className="bg-white/5 backdrop-blur-md px-8 py-4 rounded-3xl border border-white/10 text-white/60 text-sm font-bold uppercase tracking-widest text-center">
+        <div className="bg-white/5 backdrop-blur-md px-8 py-4 rounded-3xl border border-white/10 text-white/90 text-sm font-bold uppercase tracking-widest text-center">
           Move your mouse or finger to catch the falling jellybeans!<br/>
           Watch out, they speed up fast!
         </div>

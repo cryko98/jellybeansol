@@ -234,14 +234,14 @@ export default function MemeWall() {
           <div className="flex bg-white/5 backdrop-blur-md p-1.5 md:p-2 rounded-full border border-white/10 w-full sm:w-auto overflow-x-auto no-scrollbar">
             <button
               onClick={() => setSortBy('newest')}
-              className={`flex-1 sm:flex-none px-4 md:px-6 py-2.5 md:py-3 rounded-full font-black text-xs md:text-sm uppercase tracking-widest transition-all flex items-center justify-center gap-2 whitespace-nowrap ${sortBy === 'newest' ? 'bg-white text-black' : 'text-white/40 hover:text-white'}`}
+              className={`flex-1 sm:flex-none px-4 md:px-6 py-2.5 md:py-3 rounded-full font-black text-xs md:text-sm uppercase tracking-widest transition-all flex items-center justify-center gap-2 whitespace-nowrap ${sortBy === 'newest' ? 'bg-white text-black' : 'text-white/70 hover:text-white'}`}
             >
               <Clock size={14} className="md:w-4 md:h-4" />
               Newest
             </button>
             <button
               onClick={() => setSortBy('likes')}
-              className={`flex-1 sm:flex-none px-4 md:px-6 py-2.5 md:py-3 rounded-full font-black text-xs md:text-sm uppercase tracking-widest transition-all flex items-center justify-center gap-2 whitespace-nowrap ${sortBy === 'likes' ? 'bg-yellow-400 text-black' : 'text-white/40 hover:text-white'}`}
+              className={`flex-1 sm:flex-none px-4 md:px-6 py-2.5 md:py-3 rounded-full font-black text-xs md:text-sm uppercase tracking-widest transition-all flex items-center justify-center gap-2 whitespace-nowrap ${sortBy === 'likes' ? 'bg-yellow-400 text-black' : 'text-white/70 hover:text-white'}`}
             >
               <TrendingUp size={14} className="md:w-4 md:h-4" />
               Most Liked
@@ -253,7 +253,7 @@ export default function MemeWall() {
       {isLoading ? (
         <div className="flex flex-col items-center justify-center py-20">
           <Loader2 className="w-10 h-10 md:w-12 md:h-12 text-pink-500 animate-spin mb-4" />
-          <p className="text-white/60 font-bold uppercase tracking-widest text-sm md:text-base">Loading the stampede...</p>
+          <p className="text-white/90 font-bold uppercase tracking-widest text-sm md:text-base">Loading the stampede...</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8 w-full max-w-7xl">
@@ -296,7 +296,7 @@ export default function MemeWall() {
                   )}
                   <div className="flex items-center justify-between">
                     <span className="text-pink-400 font-black text-xs md:text-sm uppercase tracking-widest truncate max-w-[120px]">@{meme.author}</span>
-                    <div className="flex items-center gap-1 text-white/30">
+                    <div className="flex items-center gap-1 text-white/60">
                       <Heart size={10} className={likedMemes.includes(meme.id) ? "text-pink-500 fill-pink-500" : ""} />
                       <span className="text-[10px] md:text-xs font-bold">{meme.likes || 0}</span>
                     </div>
@@ -328,7 +328,7 @@ export default function MemeWall() {
             >
               <button 
                 onClick={() => setShowUploadModal(false)}
-                className="absolute top-4 right-4 md:top-6 md:right-6 text-white/40 hover:text-white transition-colors p-2"
+                className="absolute top-4 right-4 md:top-6 md:right-6 text-white/70 hover:text-white transition-colors p-2"
               >
                 <X size={24} className="md:w-8 md:h-8" />
               </button>
@@ -358,7 +358,7 @@ export default function MemeWall() {
                     ) : (
                       <>
                         <ImageIcon className="w-10 h-10 md:w-16 md:h-16 text-white/20 mb-2 md:mb-4" />
-                        <p className="text-white/40 font-bold uppercase tracking-widest text-xs md:text-sm">Click to select image</p>
+                        <p className="text-white/70 font-bold uppercase tracking-widest text-xs md:text-sm">Click to select image</p>
                       </>
                     )}
                   </label>
@@ -366,7 +366,7 @@ export default function MemeWall() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                   <div className="space-y-1 md:space-y-2">
-                    <label className="text-white/60 font-black text-[10px] md:text-xs uppercase tracking-widest ml-2 md:ml-4">Your Name</label>
+                    <label className="text-white/90 font-black text-[10px] md:text-xs uppercase tracking-widest ml-2 md:ml-4">Your Name</label>
                     <input 
                       type="text"
                       placeholder="Anonymous"
@@ -376,7 +376,7 @@ export default function MemeWall() {
                     />
                   </div>
                   <div className="space-y-1 md:space-y-2">
-                    <label className="text-white/60 font-black text-[10px] md:text-xs uppercase tracking-widest ml-2 md:ml-4">Caption</label>
+                    <label className="text-white/90 font-black text-[10px] md:text-xs uppercase tracking-widest ml-2 md:ml-4">Caption</label>
                     <input 
                       type="text"
                       placeholder="Funny caption..."
