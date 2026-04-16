@@ -8,15 +8,26 @@
 @layer base {
   body {
     @apply font-work text-white selection:bg-pink-400 selection:text-white;
-    background-image: url('https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/bvbv-iBaGMbGidJd2swj4.png');
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/bvbv-iBaGMbGidJd2swj4.png');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
     background-repeat: no-repeat;
+    background-color: #0d0d12;
+    cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'  width='40' height='48' style='font-size:32px'><text y='32'>🦛</text></svg>") 16 0, auto;
   }
 }
 
 @layer utilities {
+  .animate-marquee {
+    animation: marquee 30s linear infinite;
+  }
+
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
   .text-shadow-bubbly {
     text-shadow: 
       2px 2px 0px #ff00ff,

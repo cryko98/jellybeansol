@@ -1,12 +1,27 @@
 import { useState, useRef } from 'react';
 import { motion, useScroll, useTransform, useSpring, AnimatePresence } from 'motion/react';
-import { Copy, Check, Wallet, ShoppingCart, Repeat, CheckCircle2, ChevronDown, X } from 'lucide-react';
-import MemeGenerator from './components/MemeGenerator';
-import MemeWall from './components/MemeWall';
+import { Copy, Check, Wallet, ShoppingCart, Repeat, CheckCircle2, X as LucideX, Instagram, Send, Globe, Gamepad2, Info, LayoutDashboard, ChevronDown } from 'lucide-react';
 import JellybeanGame from './components/JellybeanGame';
 
 const CONTRACT_ADDRESS = '412zDygnwP9DzitnQVgRKUFFTDmrYScFch6P2k39pump';
 const DONATION_WALLET = '4zSqvAxtpZTPeN8vJzZAFm1UUaCQhf1HtEsRVVqWqMxF';
+
+const MEME_IMAGES = [
+  "https://pbs.twimg.com/media/HEhpo89WoAAFSM4?format=jpg&name=240x240",
+  "https://pbs.twimg.com/media/HEf847yW4AAHef1?format=jpg&name=240x240",
+  "https://pbs.twimg.com/media/HEcC5dXaMAAMJWd?format=jpg&name=240x240",
+  "https://pbs.twimg.com/media/HEa6Oh0aAAALpH2?format=jpg&name=240x240",
+  "https://pbs.twimg.com/media/HEYzAj1XAAAR0gd?format=jpg&name=240x240",
+  "https://pbs.twimg.com/media/HEV7HazaUAAPDhK?format=jpg&name=360x360",
+  "https://pbs.twimg.com/media/HERxCtmbsAA44MD?format=jpg&name=360x360",
+  "https://pbs.twimg.com/media/HEDbFUcWoAAGQaN?format=jpg&name=360x360",
+  "https://pbs.twimg.com/media/HD-utXUaYAAWGbd?format=jpg&name=240x240",
+  "https://pbs.twimg.com/media/HD6zSYrXQAA7lfh?format=jpg&name=360x360",
+  "https://pbs.twimg.com/media/HD3F2aGboAIhA2O?format=jpg&name=240x240",
+  "https://pbs.twimg.com/media/HDyvD-bW4AEdTbl?format=jpg&name=360x360",
+  "https://pbs.twimg.com/media/HDwPUiFakAAE5jo?format=jpg&name=360x360",
+  "https://pbs.twimg.com/media/HDsApuBWoAAwFtz?format=jpg&name=360x360"
+];
 
 export default function App() {
   const [copied, setCopied] = useState(false);
@@ -44,55 +59,63 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen overflow-x-hidden relative" ref={containerRef}>
+    <div className="min-h-screen overflow-x-hidden relative bg-[#0a0510]" ref={containerRef}>
+      {/* Background Overlay to ensure visibility */}
+      <div className="fixed inset-0 bg-black/40 z-0 pointer-events-none" />
+      
       {/* Navigation Header */}
       <header className="fixed top-0 left-0 w-full z-[100] bg-black/40 backdrop-blur-xl border-b border-white/10 px-4 py-3">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <motion.img 
-              src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jelly/jb-u2ER0qtvUZv5BNsu.png" 
-              alt="Logo" 
-              className="h-8 md:h-12 cursor-pointer"
+            <motion.div 
+              className="flex items-center gap-2 cursor-pointer group"
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              whileHover={{ scale: 1.1 }}
-              referrerPolicy="no-referrer"
-            />
-            <div className="hidden sm:flex items-center bg-white/5 border border-white/10 rounded-full px-3 py-1.5 gap-2 group cursor-pointer hover:bg-white/10 transition-all" onClick={copyToClipboard}>
-              <span className="text-[8px] md:text-[10px] text-white/90 font-black uppercase tracking-widest">CA:</span>
-              <code className="text-[10px] md:text-xs text-white font-mono font-bold truncate max-w-[80px] md:max-w-none">
-                {CONTRACT_ADDRESS}
-              </code>
-              <div className="text-yellow-400 group-hover:scale-110 transition-transform">
-                {copied ? <Check size={12} /> : <Copy size={12} />}
-              </div>
-            </div>
+              whileHover={{ scale: 1.05 }}
+            >
+              <img 
+                src="https://pbs.twimg.com/profile_images/2044414764231868416/oVL2TxK1_400x400.jpg" 
+                alt="Logo" 
+                className="h-8 md:h-10 rounded-full border border-white/20"
+                referrerPolicy="no-referrer"
+              />
+              <span className="hidden lg:block font-museo font-black text-white italic text-xl tracking-tighter">JELLYBEAN</span>
+            </motion.div>
           </div>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-1 lg:gap-4">
+          <nav className="hidden md:flex items-center gap-2 lg:gap-6 bg-white/5 border border-white/10 rounded-full px-4 py-2">
             {[
-              { name: 'Home', id: 'home' },
-              { name: 'About', id: 'about' },
-              { name: 'Memes', id: 'memes' },
-              { name: 'Game', id: 'game' },
-              { name: 'Buy', id: 'buy' },
-              { name: 'Roadmap', id: 'roadmap' }
+              { name: 'Home', id: 'home', icon: <Globe size={14} /> },
+              { name: 'About', id: 'about', icon: <Info size={14} /> },
+              { name: 'Game', id: 'game', icon: <Gamepad2 size={14} /> },
+              { name: 'Buy', id: 'buy', icon: <ShoppingCart size={14} /> },
+              { name: 'Roadmap', id: 'roadmap', icon: <LayoutDashboard size={14} /> }
             ].map((link) => (
               <button
                 key={link.id}
                 onClick={() => document.getElementById(link.id)?.scrollIntoView({ behavior: 'smooth' })}
-                className="text-[10px] lg:text-xs font-black text-white hover:text-white uppercase tracking-widest px-3 py-2 rounded-full hover:bg-white/5 transition-all whitespace-nowrap"
+                className="flex items-center gap-2 text-[10px] lg:text-xs font-black text-white/70 hover:text-pink-400 uppercase tracking-widest px-2 py-1 transition-all whitespace-nowrap"
               >
+                {link.icon}
                 {link.name}
               </button>
             ))}
           </nav>
 
           <div className="flex items-center gap-3">
+            <div className="hidden xl:flex items-center bg-white/5 border border-white/10 rounded-full px-3 py-1.5 gap-2 group cursor-pointer hover:bg-white/10 transition-all mr-2" onClick={copyToClipboard}>
+              <span className="text-[8px] md:text-[10px] text-white/50 font-black uppercase tracking-widest">CA:</span>
+              <code className="text-[10px] text-white/90 font-mono font-bold truncate max-w-[120px]">
+                {CONTRACT_ADDRESS}
+              </code>
+              <div className="text-yellow-400">
+                {copied ? <Check size={12} /> : <Copy size={12} />}
+              </div>
+            </div>
             <motion.a 
               href="https://dexscreener.com/solana/2jbxebefzmnzgmp8frhsujjqqzudlhjzwbjvh7vbw7df"
               target="_blank"
-              className="hidden sm:block bg-yellow-400 text-black text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-widest hover:scale-105 transition-transform"
+              className="bg-pink-500 hover:bg-pink-400 text-white text-[10px] font-black px-6 py-2.5 rounded-full uppercase tracking-widest shadow-[0_0_20px_rgba(236,72,153,0.3)]"
               whileTap={{ scale: 0.95 }}
             >
               Buy Now
@@ -101,13 +124,12 @@ export default function App() {
             {/* Mobile Menu Toggle */}
             <button 
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden p-2 text-white hover:text-white transition-colors"
+              className="md:hidden p-2 text-white hover:text-pink-400 transition-colors"
             >
-              {isMenuOpen ? <X size={24} /> : (
-                <div className="space-y-1.5">
+              {isMenuOpen ? <LucideX size={24} /> : (
+                <div className="space-y-1.5 flex flex-col items-end">
                   <div className="w-6 h-0.5 bg-current" />
-                  <div className="w-6 h-0.5 bg-current" />
-                  <div className="w-4 h-0.5 bg-current ml-auto" />
+                  <div className="w-4 h-0.5 bg-current" />
                 </div>
               )}
             </button>
@@ -127,7 +149,6 @@ export default function App() {
                 {[
                   { name: 'Home', id: 'home' },
                   { name: 'About', id: 'about' },
-                  { name: 'Memes', id: 'memes' },
                   { name: 'Game', id: 'game' },
                   { name: 'Buy', id: 'buy' },
                   { name: 'Roadmap', id: 'roadmap' }
@@ -138,9 +159,10 @@ export default function App() {
                       document.getElementById(link.id)?.scrollIntoView({ behavior: 'smooth' });
                       setIsMenuOpen(false);
                     }}
-                    className="text-left text-lg font-black text-white hover:text-white uppercase tracking-[0.2em] py-2 border-b border-white/5"
+                    className="text-left text-lg font-black text-white hover:text-pink-400 uppercase tracking-[0.2em] py-4 border-b border-white/5 flex items-center justify-between group"
                   >
                     {link.name}
+                    <ChevronDown size={20} className="-rotate-90 text-white/20 group-hover:text-pink-500" />
                   </button>
                 ))}
                 <div className="flex flex-col gap-4 mt-4">
@@ -177,197 +199,160 @@ export default function App() {
         </AnimatePresence>
       </header>
 
-      {/* Floating Decorative Jellybeans - Enhanced Rain Effect */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <img src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/jellybean-1-0ni0BiSWV1vCVkaU.png" className="absolute top-[10%] left-[5%] w-24 floating opacity-40" alt="" />
-        <img src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/jellybean-1-0ni0BiSWV1vCVkaU.png" className="absolute top-[30%] right-[10%] w-32 floating opacity-40 [animation-delay:1s]" alt="" />
-        <img src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/jellybean-1-0ni0BiSWV1vCVkaU.png" className="absolute bottom-[20%] left-[15%] w-20 floating opacity-40 [animation-delay:2s]" alt="" />
-        <img src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/jellybean-1-0ni0BiSWV1vCVkaU.png" className="absolute top-[60%] right-[5%] w-28 floating opacity-40 [animation-delay:0.5s]" alt="" />
-        <img src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/jellybean-1-0ni0BiSWV1vCVkaU.png" className="absolute top-[45%] left-[40%] w-16 floating opacity-20 [animation-delay:3s]" alt="" />
-        <img src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/jellybean-1-0ni0BiSWV1vCVkaU.png" className="absolute bottom-[10%] right-[30%] w-24 floating opacity-30 [animation-delay:1.5s]" alt="" />
-        <img src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/jellybean-1-0ni0BiSWV1vCVkaU.png" className="absolute top-[80%] left-[60%] w-20 floating opacity-20 [animation-delay:4s]" alt="" />
+        {/* Core floating beans */}
+        <img src="https://content.mycutegraphics.com/graphics/jellybean/pink-jellybean-black-outline.png" className="absolute top-[10%] left-[5%] w-12 md:w-24 floating opacity-40" alt="" />
+        <img src="https://content.mycutegraphics.com/graphics/jellybean/yellow-jellybean-black-outline.png" className="absolute top-[30%] right-[10%] w-16 md:w-32 floating opacity-40 [animation-delay:1s]" alt="" />
+        <img src="https://content.mycutegraphics.com/graphics/jellybean/purple-jellybean-black-outline.png" className="absolute bottom-[20%] left-[15%] w-10 md:w-20 floating opacity-40 [animation-delay:2s]" alt="" />
+        <img src="https://content.mycutegraphics.com/graphics/jellybean/green-jellybean-black-outline.png" className="absolute top-[60%] right-[5%] w-14 md:w-28 floating opacity-40 [animation-delay:0.5s]" alt="" />
+        
+        {/* Extra scattered beans */}
+        <img src="https://content.mycutegraphics.com/graphics/jellybean/pink-jellybean-black-outline.png" className="absolute top-[5%] right-[25%] w-8 md:w-16 floating opacity-20 [animation-delay:1.5s]" alt="" />
+        <img src="https://content.mycutegraphics.com/graphics/jellybean/yellow-jellybean-black-outline.png" className="absolute top-[85%] left-[20%] w-12 md:w-24 floating opacity-30 [animation-delay:2.5s]" alt="" />
+        <img src="https://content.mycutegraphics.com/graphics/jellybean/purple-jellybean-black-outline.png" className="absolute top-[50%] left-[60%] w-10 md:w-20 floating opacity-20 [animation-delay:4s]" alt="" />
+        <img src="https://content.mycutegraphics.com/graphics/jellybean/green-jellybean-black-outline.png" className="absolute top-[15%] left-[30%] w-6 md:w-12 floating opacity-30 [animation-delay:1.2s]" alt="" />
+        <img src="https://content.mycutegraphics.com/graphics/jellybean/pink-jellybean-black-outline.png" className="absolute top-[75%] right-[40%] w-8 md:w-14 floating opacity-25 [animation-delay:3.2s]" alt="" />
+        <img src="https://content.mycutegraphics.com/graphics/jellybean/yellow-jellybean-black-outline.png" className="absolute bottom-[5%] right-[15%] w-14 md:w-22 floating opacity-20 [animation-delay:0.8s]" alt="" />
       </div>
 
       {/* 1. HEADER / HERO SECTION */}
-      <section id="home" className="relative w-full min-h-[100dvh] flex flex-col items-center justify-center pt-20 pb-24 px-4 z-10 overflow-hidden">
-        {/* Complex Background Layers */}
+      <section id="home" className="relative w-full min-h-screen flex flex-col items-center justify-center pt-32 pb-24 px-4 z-10 overflow-hidden">
+        {/* Background Gradients */}
         <div className="absolute inset-0 pointer-events-none">
-          <motion.div 
-            animate={{ 
-              x: [0, 50, 0],
-              y: [0, -30, 0],
-              scale: [1, 1.1, 1],
-            }}
-            transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20%_30%,rgba(255,182,193,0.15)_0%,transparent_50%)]"
-          />
-          <motion.div 
-            animate={{ 
-              x: [0, -50, 0],
-              y: [0, 30, 0],
-              scale: [1.1, 1, 1.1],
-            }}
-            transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_80%_70%,rgba(147,51,234,0.15)_0%,transparent_50%)]"
-          />
-          
-          {/* Large Background Text */}
-          <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] select-none pointer-events-none">
-            <h2 className="font-museo text-[30vw] font-black italic uppercase tracking-tighter leading-none">
-              JELLYBEAN
-            </h2>
-          </div>
+          <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(236,72,153,0.1)_0%,transparent_70%)]" />
+          <div className="absolute bottom-0 right-0 w-full h-full bg-[radial-gradient(circle_at_80%_80%,rgba(147,51,234,0.1)_0%,transparent_50%)]" />
         </div>
 
-        <motion.div 
-          style={{ opacity }}
-          className="w-full max-w-7xl flex flex-col items-center text-center relative"
-        >
-          {/* Logo with enhanced effects */}
-          <div className="relative mb-12">
-            <motion.div
-              animate={{ 
-                scale: [1, 1.05, 1],
-                rotate: [0, 1, -1, 0]
-              }}
-              transition={{ duration: 6, repeat: Infinity }}
-              className="relative z-20"
-            >
-              <motion.img 
-                src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jelly/jb-u2ER0qtvUZv5BNsu.png" 
-                alt="Jellybean Logo" 
-                className="w-full max-w-4xl drop-shadow-[0_0_60px_rgba(255,255,255,0.5)]"
-                initial={{ opacity: 0, y: -100, scale: 0.5, rotate: -15 }}
-                animate={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
-                transition={{ duration: 1.5, type: "spring", bounce: 0.5 }}
-                whileHover={{ scale: 1.03, rotate: 2 }}
-                referrerPolicy="no-referrer"
-              />
-            </motion.div>
-            <div className="absolute inset-0 bg-pink-500/20 blur-[100px] rounded-full z-10 scale-110" />
-          </div>
-          
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 0.8 }}
-            className="space-y-4 md:space-y-6 mb-12 md:mb-20 relative z-30"
+        <div className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <motion.div 
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-center lg:text-left space-y-8"
           >
-            <motion.div 
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 1.2, type: "spring" }}
-              className="inline-block px-6 md:px-8 py-2 md:py-3 bg-white/10 backdrop-blur-md border-2 border-white/20 rounded-full mb-4 md:mb-6 shadow-2xl"
-            >
-              <span className="text-white font-black tracking-[0.2em] md:tracking-[0.4em] uppercase text-[10px] md:text-sm">The Next Generation of Memes</span>
-            </motion.div>
-            <h1 className="font-museo text-4xl sm:text-6xl md:text-8xl text-white font-black tracking-tighter leading-none uppercase italic drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
-              The next viral <br className="hidden md:block" /> baby hippo
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-md rounded-full border border-white/10">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-pink-500"></span>
+              </span>
+              <span className="text-white/70 text-[10px] font-black uppercase tracking-widest">Born in America • Raised on Solana</span>
+            </div>
+
+            <h1 className="font-museo text-5xl sm:text-7xl md:text-8xl xl:text-9xl text-white font-black leading-[0.9] uppercase italic tracking-tighter">
+              The <span className="text-pink-500">Next Viral</span> <br /> Baby Hippo
             </h1>
-            <p className="font-museo text-lg sm:text-2xl md:text-4xl text-yellow-300 font-black tracking-widest uppercase drop-shadow-lg">
-              Born in America. Raised on the Blockchain.
+
+            <p className="text-lg md:text-2xl text-white font-bold max-w-xl mx-auto lg:mx-0 leading-relaxed drop-shadow-lg">
+              Meet $JELLYBEAN, the cutest hippo on the blockchain. Not just a token, but a stampede of joy taking over the timelines.
             </p>
-          </motion.div>
 
-          {/* Character Section with more layers */}
-          <div className="relative w-full max-w-5xl flex justify-center items-center mb-12 md:mb-24">
-            <div className="absolute inset-0 bg-gradient-to-r from-pink-500/20 via-purple-500/20 to-pink-500/20 blur-[100px] md:blur-[180px] rounded-full scale-110 animate-pulse" />
-            
-            <motion.div
-              className="relative z-20"
-              initial={{ opacity: 0, scale: 0.3, rotate: -20 }}
-              animate={{ opacity: 1, scale: 1, rotate: 0 }}
-              transition={{ delay: 0.5, duration: 1.2, type: "spring", bounce: 0.3 }}
-            >
-              <motion.img 
-                style={{ y: springHippoY, scale: hippoScale, rotate: hippoRotate }}
-                src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jelly/jellybean-4VcIIo9lkb3iyhLx.webp" 
-                alt="Jellybean Character" 
-                className="w-64 sm:w-80 md:w-[750px] drop-shadow-[0_0_60px_md:0_0_120px_rgba(255,255,255,0.6)]"
-                whileHover={{ scale: 1.08, rotate: 3 }}
-                referrerPolicy="no-referrer"
-              />
-            </motion.div>
-          </div>
-
-          {/* Hero Buttons with extra polish */}
-          <motion.div 
-            initial={{ opacity: 0, y: 60 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.4, duration: 0.8 }}
-            className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-16 mb-12 md:mb-24 relative z-40 w-full px-4"
-          >
-            <motion.a 
-              href="https://dexscreener.com/solana/2jbxebefzmnzgmp8frhsujjqqzudlhjzwbjvh7vbw7df"
-              target="_blank"
-              className="block w-full max-w-[320px] md:max-w-[450px] relative group"
-              whileHover={{ scale: 1.05, y: -10 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <div className="absolute inset-0 bg-white/40 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-all duration-500" />
-              <img 
-                src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/dxs-6nCRx7ATo5K0ArJx.png" 
-                className="w-full h-auto drop-shadow-[0_20px_40px_rgba(0,0,0,0.3)] relative z-10" 
-                alt="Dexscreener Chart" 
-                referrerPolicy="no-referrer"
-              />
-            </motion.a>
-
-            <motion.a 
-              href="https://x.com/i/communities/2026237091508543653"
-              target="_blank"
-              className="block w-full max-w-[320px] md:max-w-[450px] relative group"
-              whileHover={{ scale: 1.05, y: -10 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <div className="absolute inset-0 bg-purple-500/50 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-all duration-500" />
-              <img 
-                src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/chatgpt-image-feb-17-2026-03_04_48-am-efGETjOsrf2Xc3da(2).png" 
-                className="w-full h-auto drop-shadow-[0_20px_40px_rgba(0,0,0,0.3)] relative z-10" 
-                alt="X Community" 
-                referrerPolicy="no-referrer"
-              />
-            </motion.a>
-          </motion.div>
-
-          {/* Donation Section */}
-          <motion.div 
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.6, duration: 0.8 }}
-            className="mt-8 md:mt-0 p-6 md:p-8 bg-white/5 backdrop-blur-xl border border-white/10 rounded-[2rem] md:rounded-[3rem] max-w-2xl w-full relative z-40 group hover:bg-white/10 transition-all shadow-2xl mx-auto"
-          >
-            <div className="flex flex-col items-center gap-4">
-              <div className="flex items-center gap-3 text-yellow-300">
-                <Wallet size={24} className="animate-pulse" />
-                <h3 className="font-museo text-lg md:text-2xl font-black uppercase tracking-widest italic">Support the Zoo</h3>
-              </div>
-              <p className="text-white text-[10px] md:text-sm font-bold uppercase tracking-wider leading-relaxed">
-                If you want to support the zoo, you can send USDC to this wallet:
-              </p>
-              <div 
-                onClick={copyDonationToClipboard}
-                className="w-full bg-black/40 border border-white/10 rounded-xl md:rounded-2xl p-3 md:p-4 flex items-center justify-between cursor-pointer hover:bg-black/60 transition-all group/wallet"
+            <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
+              <motion.a 
+                href="https://dexscreener.com/solana/2jbxebefzmnzgmp8frhsujjqqzudlhjzwbjvh7vbw7df"
+                target="_blank"
+                className="w-full sm:w-auto px-10 py-5 bg-pink-500 text-white rounded-2xl font-black text-xl uppercase tracking-widest shadow-[0_20px_50px_rgba(236,72,153,0.3)] border-b-4 border-pink-700 active:border-b-0 active:translate-y-1 transition-all flex items-center justify-center gap-3"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
-                <code className="font-mono text-[10px] md:text-sm text-white/90 break-all text-left font-bold">
-                  {DONATION_WALLET}
-                </code>
-                <div className="flex-shrink-0 ml-4 text-yellow-400 group-hover/wallet:scale-110 transition-transform">
-                  {donationCopied ? <Check size={18} /> : <Copy size={18} />}
-                </div>
-              </div>
-              {donationCopied && (
-                <motion.span 
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="text-green-400 text-[10px] md:text-xs font-black uppercase tracking-widest"
-                >
-                  Wallet address copied!
-                </motion.span>
-              )}
+                <ShoppingCart size={24} />
+                Buy $JELLYBEAN
+              </motion.a>
+              <button 
+                onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })}
+                className="w-full sm:w-auto px-10 py-5 bg-white/10 backdrop-blur-md text-white rounded-2xl font-black text-xl uppercase tracking-widest border border-white/20 hover:bg-white/20 transition-all flex items-center justify-center gap-3 shadow-xl"
+              >
+                Learn More
+              </button>
+            </div>
+
+            <div className="flex items-center gap-6 justify-center lg:justify-start pt-4">
+              <motion.a whileHover={{ y: -5 }} href="https://x.com/i/communities/2026237091508543653" target="_blank" className="p-4 bg-white/5 rounded-2xl border border-white/10 hover:text-blue-400 transition-all">
+                <LucideX size={24} />
+              </motion.a>
+              <motion.a whileHover={{ y: -5 }} href="https://www.instagram.com/wildlifeworldzoo/" target="_blank" className="p-4 bg-white/5 rounded-2xl border border-white/10 hover:text-pink-400 transition-all">
+                <Instagram size={24} />
+              </motion.a>
+              <motion.a whileHover={{ y: -5 }} href="https://www.tiktok.com/@wildlifeworldzoo" target="_blank" className="p-4 bg-white/5 rounded-2xl border border-white/10 hover:text-white transition-all">
+                <Globe size={24} />
+              </motion.a>
             </div>
           </motion.div>
-        </motion.div>
+
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.8, rotate: 10 }}
+            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+            transition={{ duration: 1, type: "spring", bounce: 0.4 }}
+            className="relative flex justify-center"
+          >
+            <div className="absolute inset-0 bg-pink-500/20 blur-[120px] rounded-full animate-pulse" />
+            <motion.img 
+              style={{ y: springHippoY }}
+              src="https://pbs.twimg.com/profile_images/2044414764231868416/oVL2TxK1_400x400.jpg" 
+              alt="Jellybean Character" 
+              className="w-full max-w-[500px] xl:max-w-[700px] drop-shadow-[0_0_80px_rgba(255,100,255,0.4)] relative z-10 rounded-[4rem] border-8 border-white/10"
+              whileHover={{ scale: 1.05, rotate: 2 }}
+              referrerPolicy="no-referrer"
+            />
+            {/* Floating Badges */}
+            <motion.div 
+              animate={{ y: [0, -20, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute -top-10 -right-10 bg-yellow-400 text-black px-6 py-4 rounded-3xl font-black italic shadow-2xl border-4 border-white rotate-12 z-20"
+            >
+              CUTE VIBES ONLY!
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Stats Bento Section */}
+      <section className="w-full py-12 px-4 relative z-10">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <motion.div 
+            whileHover={{ y: -5 }}
+            className="p-8 bg-black/40 backdrop-blur-xl rounded-[2.5rem] border border-white/10 flex flex-col gap-4 text-center lg:text-left shadow-2xl"
+          >
+            <div className="w-12 h-12 bg-pink-500 rounded-2xl flex items-center justify-center mx-auto lg:mx-0 shadow-lg shadow-pink-500/20">
+              <CheckCircle2 className="text-white" size={24} />
+            </div>
+            <div>
+              <h4 className="text-white/60 text-xs font-black uppercase tracking-widest mb-1">Status</h4>
+              <p className="text-2xl text-white font-black uppercase italic">Solana Verified</p>
+            </div>
+          </motion.div>
+
+          <motion.div 
+            whileHover={{ y: -5 }}
+            className="p-8 bg-black/40 backdrop-blur-xl rounded-[2.5rem] border border-white/10 flex flex-col gap-4 text-center lg:text-left shadow-2xl"
+          >
+            <div className="w-12 h-12 bg-purple-500 rounded-2xl flex items-center justify-center mx-auto lg:mx-0 shadow-lg shadow-purple-500/20">
+              <Wallet className="text-white" size={24} />
+            </div>
+            <div>
+              <h4 className="text-white/60 text-xs font-black uppercase tracking-widest mb-1">Support</h4>
+              <p className="text-2xl text-white font-black uppercase italic">Zoo Funded</p>
+            </div>
+          </motion.div>
+
+          <motion.div 
+            whileHover={{ y: -5 }}
+            className="lg:col-span-2 p-8 bg-gradient-to-r from-pink-500/20 to-purple-500/20 backdrop-blur-xl rounded-[2.5rem] border border-white/20 flex flex-col md:flex-row items-center gap-8"
+          >
+            <div className="flex-1 text-center md:text-left">
+              <h4 className="text-white/70 text-sm font-black uppercase tracking-widest mb-2">Join the Community</h4>
+              <p className="text-white text-3xl font-black uppercase italic tracking-tighter mb-4">Timelines are ours</p>
+              <div className="flex items-center gap-4 justify-center md:justify-start">
+                <a href="https://x.com/i/communities/2026237091508543653" target="_blank" className="bg-white text-black px-6 py-2.5 rounded-full font-black text-xs uppercase tracking-widest hover:bg-pink-100 transition-colors">Join X</a>
+                <a href="https://www.instagram.com/wildlifeworldzoo/" target="_blank" className="bg-white/10 text-white border border-white/20 px-6 py-2.5 rounded-full font-black text-xs uppercase tracking-widest hover:bg-white/20 transition-colors">Follow IG</a>
+              </div>
+            </div>
+            <img 
+              src="https://content.mycutegraphics.com/graphics/jellybean/pink-jellybean-black-outline.png" 
+              className="w-24 h-24 hidden md:block animate-bounce drop-shadow-glow" 
+              alt="" 
+            />
+          </motion.div>
+        </div>
       </section>
 
       {/* Ticker Bar */}
@@ -382,129 +367,102 @@ export default function App() {
               <span className="font-museo text-2xl md:text-5xl text-white font-black uppercase italic tracking-tighter px-12">
                 $JELLYBEAN TO THE MOON
               </span>
-              <img src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jelly/jellybean-4VcIIo9lkb3iyhLx.webp" className="w-16 h-16 drop-shadow-md flex-shrink-0" alt="" />
+              <img src="https://content.mycutegraphics.com/graphics/jellybean/yellow-jellybean-black-outline.png" className="w-16 h-16 drop-shadow-md flex-shrink-0" alt="" />
               <span className="font-museo text-2xl md:text-5xl text-yellow-300 font-black uppercase italic tracking-tighter px-12">
                 BORN IN AMERICA
               </span>
-              <img src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jelly/jellybean-4VcIIo9lkb3iyhLx.webp" className="w-16 h-16 drop-shadow-md flex-shrink-0" alt="" />
+              <img src="https://content.mycutegraphics.com/graphics/jellybean/pink-jellybean-black-outline.png" className="w-16 h-16 drop-shadow-md flex-shrink-0" alt="" />
             </div>
           ))}
         </motion.div>
       </div>
 
-      {/* 2. MANIFESTO SECTION */}
-      <section id="about" className="w-full py-16 md:py-32 px-4 flex flex-col items-center z-10 relative">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-full bg-pink-500/5 blur-[120px] rounded-full pointer-events-none" />
-        
-        <motion.div 
-          className="text-center mb-12 md:mb-16 relative"
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-        >
-          <h2 className="font-museo text-5xl sm:text-7xl md:text-9xl text-white font-black uppercase tracking-tighter mb-2 drop-shadow-[0_10px_20px_rgba(0,0,0,0.4)]">
-            EVOLUTION
-          </h2>
-          <p className="font-museo text-xl sm:text-3xl md:text-5xl text-yellow-300 uppercase font-black tracking-[0.1em] md:tracking-[0.2em] drop-shadow-glow">IS INEVITABLE</p>
-        </motion.div>
-
-        <motion.div 
-          className="pink-box w-full max-w-6xl p-6 sm:p-12 md:p-20 relative overflow-hidden group"
-          initial={{ opacity: 0, scale: 0.9, y: 50 }}
-          whileInView={{ opacity: 1, scale: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8, type: "spring" }}
-        >
-          {/* Animated Background Blobs inside box */}
-          <motion.div 
-            animate={{ 
-              scale: [1, 1.2, 1],
-              opacity: [0.1, 0.2, 0.1]
-            }}
-            transition={{ duration: 8, repeat: Infinity }}
-            className="absolute top-0 right-0 w-64 h-64 bg-white/20 rounded-full blur-3xl"
-          />
-          
-          <img src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/jellybean-1-0ni0BiSWV1vCVkaU.png" className="absolute -bottom-10 -left-10 w-48 md:w-72 opacity-10 rotate-12 pointer-events-none group-hover:rotate-45 transition-transform duration-1000" alt="" />
-          <img src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/jellybean-1-0ni0BiSWV1vCVkaU.png" className="absolute -top-10 -right-10 w-48 md:w-72 opacity-10 -rotate-12 pointer-events-none group-hover:-rotate-45 transition-transform duration-1000" alt="" />
-
-          <div className="relative z-10 flex flex-col items-center text-center">
-            <h3 className="font-museo text-4xl sm:text-6xl md:text-8xl text-white mb-8 md:mb-12 drop-shadow-2xl font-black italic tracking-tighter">WHY JELLYBEAN?</h3>
-            
-            <div className="space-y-6 md:space-y-8 text-lg sm:text-2xl md:text-3xl font-bold text-white leading-relaxed">
-              <p className="hover:text-yellow-200 transition-all hover:scale-105 cursor-default">Because the world doesn't need another serious coin.</p>
-              <p className="hover:text-yellow-200 transition-all hover:scale-105 cursor-default">It needs a baby hippo.</p>
-              <p className="hover:text-yellow-200 transition-all hover:scale-105 cursor-default">Cute enough to go viral.</p>
-              <p className="hover:text-yellow-200 transition-all hover:scale-105 cursor-default">Strong enough to stampede.</p>
-              <div className="py-8 md:py-12">
-                <motion.p 
-                  animate={{ scale: [1, 1.1, 1] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                  className="text-4xl sm:text-6xl md:text-8xl font-museo text-yellow-300 drop-shadow-glow italic font-black"
-                >
-                  $JELLYBEAN
-                </motion.p>
-                <p className="text-xl sm:text-3xl md:text-4xl font-museo opacity-80 mt-4 italic">isn't here to explain itself.</p>
-              </div>
-              <p className="text-2xl sm:text-4xl md:text-6xl font-museo text-white drop-shadow-2xl italic font-black">It's here to take over timelines.</p>
+      {/* Meme Section (Replaced Generator & Wall with Content Cards) */}
+      <section id="memes" className="w-full py-16 md:py-32 px-4 relative scroll-mt-20 overflow-hidden">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-8 mb-16">
+            <div className="text-center md:text-left">
+              <h2 className="font-museo text-5xl sm:text-7xl md:text-8xl text-white font-black uppercase italic tracking-tighter mb-4 text-shadow-bubbly">Meme Lab</h2>
+              <p className="text-xl text-yellow-300 font-black uppercase tracking-widest drop-shadow-md">The herd is creating art...</p>
             </div>
-
-            <div className="flex flex-col md:flex-row items-center justify-between w-full mt-12 md:mt-20 px-4 gap-8">
-              <motion.img 
-                animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }}
-                transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/jellybean-1-0ni0BiSWV1vCVkaU.png" 
-                className="w-32 md:w-64 drop-shadow-2xl" 
-                alt="" 
-              />
-              <motion.img 
-                initial={{ opacity: 0, scale: 0.5 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/jbb-hNum98ZkRGwl7FAw.gif" 
-                className="w-40 md:w-80 drop-shadow-2xl rounded-2xl md:rounded-3xl" 
-                alt="Jellybean Evolution GIF" 
-              />
-              <motion.img 
-                animate={{ y: [0, -20, 0], rotate: [0, -5, 0] }}
-                transition={{ repeat: Infinity, duration: 4, ease: "easeInOut", delay: 2 }}
-                src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/jellybean-1-0ni0BiSWV1vCVkaU.png" 
-                className="w-32 md:w-64 scale-x-[-1] drop-shadow-2xl" 
-                alt="" 
-              />
-            </div>
+            <motion.a 
+              href="https://x.com/i/communities/2026237091508543653"
+              target="_blank"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="px-10 py-5 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-2xl font-black text-xl uppercase tracking-widest shadow-xl flex items-center gap-3"
+            >
+              <span className="font-sans font-black text-2xl italic">X</span>
+              Join the Stampede
+            </motion.a>
           </div>
-        </motion.div>
+
+          <div className="relative w-full overflow-hidden py-10 bg-black/40 backdrop-blur-md rounded-[3rem] border border-white/10 group">
+            <div className="flex whitespace-nowrap animate-marquee hover:[animation-play-state:paused]">
+              {[...MEME_IMAGES, ...MEME_IMAGES].map((src, i) => (
+                <div key={i} className="inline-block px-2 md:px-4">
+                  <div className="w-40 md:w-64 h-40 md:h-64 rounded-2xl md:rounded-[2rem] overflow-hidden border-2 md:border-4 border-white/10 shadow-2xl transition-all duration-500 hover:scale-105 hover:border-pink-500/50">
+                    <img 
+                      src={src} 
+                      className="w-full h-full object-cover" 
+                      alt={`Meme ${i}`} 
+                      loading="lazy"
+                      referrerPolicy="no-referrer"
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+            {/* Gradient Overlays for smooth edges */}
+            <div className="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-black/60 to-transparent z-10 pointer-events-none" />
+            <div className="absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-black/60 to-transparent z-10 pointer-events-none" />
+          </div>
+        </div>
       </section>
 
-      {/* Meme Generator Section */}
-      <div id="memes" className="scroll-mt-20">
-        <MemeGenerator />
-        <MemeWall />
-      </div>
+      {/* 2. MANIFESTO SECTION (Redesigned) */}
+      <section id="about" className="w-full py-16 md:py-32 px-4 flex flex-col items-center z-10 relative bg-black/20">
+        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16">
+          <div className="flex-1 space-y-8 text-center lg:text-left">
+            <h2 className="font-museo text-5xl sm:text-7xl md:text-8xl text-white font-black uppercase tracking-tighter leading-none italic">
+              EVOLUTION <br /><span className="text-yellow-400">IS INEVITABLE</span>
+            </h2>
+            <div className="space-y-6 text-lg md:text-2xl font-bold text-white leading-relaxed">
+              <p>Because the world doesn't need another serious coin. It needs a baby hippo.</p>
+              <p className="text-pink-400 drop-shadow-md">Born in America. Raised on the Blockchain.</p>
+              <p>Cute enough to go viral. Strong enough to stampede. $JELLYBEAN isn't here to explain itself.</p>
+              <p className="text-3xl md:text-5xl text-yellow-400 font-black uppercase italic tracking-tighter drop-shadow-lg">It's here to take over timelines.</p>
+            </div>
+            
+            <div className="flex flex-wrap gap-4 justify-center lg:justify-start pt-8">
+              <div className="px-6 py-3 bg-white/5 border border-white/10 rounded-2xl">
+                <p className="text-white text-3xl font-black italic">100%</p>
+                <p className="text-white/40 text-[10px] font-black uppercase tracking-widest">Herd Driven</p>
+              </div>
+              <div className="px-6 py-3 bg-white/5 border border-white/10 rounded-2xl">
+                <p className="text-white text-3xl font-black italic">SOL</p>
+                <p className="text-white/40 text-[10px] font-black uppercase tracking-widest">Network</p>
+              </div>
+              <div className="px-6 py-3 bg-white/5 border border-white/10 rounded-2xl">
+                <p className="text-white text-3xl font-black italic">ZOO</p>
+                <p className="text-white/40 text-[10px] font-black uppercase tracking-widest">Supported</p>
+              </div>
+            </div>
+          </div>
 
-      {/* Transition Image */}
-      <div className="w-full flex flex-col items-center py-20 z-10 relative">
-        <motion.img 
-          initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
-          whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 1, type: "spring", bounce: 0.4 }}
-          src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/jellybean-7-8gCvdJHz8PXwiRoY(1).png" 
-          className="w-full max-w-xl px-4 drop-shadow-[0_0_50px_rgba(255,255,255,0.3)] mb-20"
-          alt="Large Jellybean Character"
-          referrerPolicy="no-referrer"
-        />
-        
-        <motion.img 
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/untitled-design-39-dDf39Jft8MQ2jVk8.png" 
-          className="w-full max-w-5xl px-4 drop-shadow-2xl"
-          alt="How to Buy Banner"
-          referrerPolicy="no-referrer"
-        />
-      </div>
+          <motion.div 
+            className="flex-1 relative"
+            whileHover={{ scale: 1.02 }}
+          >
+            <div className="absolute inset-0 bg-pink-500/30 blur-[100px] rounded-full" />
+            <img 
+              src={MEME_IMAGES[0]} 
+              className="w-full h-auto rounded-[3rem] border-8 border-white/10 shadow-2xl relative z-10" 
+              alt="Jellybean Evolution" 
+            />
+          </motion.div>
+        </div>
+      </section>
 
       {/* Mini Game Section */}
       <section id="game" className="w-full py-20 z-10 relative scroll-mt-20">
@@ -546,7 +504,7 @@ export default function App() {
               </div>
               <h3 className="text-xl md:text-2xl font-black text-white mb-3 md:mb-4 leading-tight relative z-10">{item.title}</h3>
               <p className="text-sm md:text-base text-white font-bold mb-6 relative z-10">{item.desc}</p>
-              <img src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/jellybean-1-0ni0BiSWV1vCVkaU.png" className="w-16 md:w-20 mt-auto opacity-40 group-hover:opacity-100 transition-opacity duration-500 relative z-10" alt="" />
+              <img src="https://content.mycutegraphics.com/graphics/jellybean/pink-jellybean-black-outline.png" className="w-16 md:w-20 mt-auto opacity-60 group-hover:opacity-100 transition-opacity duration-500 relative z-10" alt="" />
               
               {/* Hover Glow */}
               <div className={`absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity rounded-[2.5rem] md:rounded-[3rem] blur-2xl ${item.color}`} />
@@ -627,72 +585,89 @@ export default function App() {
                 <h3 className="text-2xl md:text-5xl font-black text-white mb-4 md:mb-6 italic uppercase tracking-tighter drop-shadow-md">{item.phase}</h3>
                 <div className={`flex flex-wrap justify-center ${i % 2 === 0 ? 'md:justify-start' : 'md:justify-end'} gap-2 md:gap-3`}>
                   {item.items.map((li, j) => (
-                    <span key={j} className="px-4 md:px-6 py-2 md:py-3 bg-black/30 rounded-full text-white font-black text-[10px] md:text-sm uppercase tracking-widest border border-white/10 hover:bg-black/50 transition-colors shadow-lg">
+                    <span key={j} className="px-4 md:px-6 py-2 md:py-3 bg-black/60 rounded-full text-white font-black text-[10px] md:text-sm uppercase tracking-widest border border-white/20 hover:bg-black/80 transition-colors shadow-lg">
                       {li}
                     </span>
                   ))}
                 </div>
               </div>
-              <img src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/jellybean-1-0ni0BiSWV1vCVkaU.png" className={`w-24 md:w-32 opacity-40 group-hover:opacity-100 transition-opacity hidden md:block ${i % 2 === 0 ? 'rotate-12' : '-rotate-12'}`} alt="" />
+              <img src="https://content.mycutegraphics.com/graphics/jellybean/purple-jellybean-black-outline.png" className={`w-24 md:w-32 opacity-40 group-hover:opacity-100 transition-opacity hidden md:block ${i % 2 === 0 ? 'rotate-12' : '-rotate-12'}`} alt="" />
             </motion.div>
           ))}
         </div>
       </section>
 
       {/* 6. FOOTER */}
-      <footer className="w-full py-16 md:py-32 px-4 flex flex-col items-center text-center z-10 bg-black/20 backdrop-blur-md">
-        <motion.img 
-          src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jelly/jb-u2ER0qtvUZv5BNsu.png" 
-          alt="Jellybean Logo" 
-          className="w-48 sm:w-64 md:w-[500px] mb-8 md:mb-12 drop-shadow-glow"
-          whileHover={{ scale: 1.05, rotate: [0, -2, 2, 0] }}
-          referrerPolicy="no-referrer"
-        />
-        <div className="flex flex-wrap justify-center gap-4 md:gap-12 mb-8 md:mb-12">
+      <footer className="w-full py-16 md:py-32 px-4 flex flex-col items-center text-center z-10 bg-black/40 border-t border-white/10">
+        <motion.div 
+          className="flex flex-col items-center mb-16"
+          whileHover={{ scale: 1.02 }}
+        >
+          <img 
+            src="https://pbs.twimg.com/profile_images/2044414764231868416/oVL2TxK1_400x400.jpg" 
+            alt="Jellybean Logo" 
+            className="w-32 md:w-48 mb-6 drop-shadow-glow rounded-full border-4 border-white/10"
+            referrerPolicy="no-referrer"
+          />
+          <h2 className="font-museo text-4xl md:text-6xl text-white font-black italic uppercase tracking-tighter">$JELLYBEAN</h2>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full max-w-5xl mb-16">
           <motion.a 
-            whileHover={{ scale: 1.05, y: -5 }} 
             href="https://x.com/i/communities/2026237091508543653" 
             target="_blank"
-            className="w-32 sm:w-48 md:w-64"
+            className="flex items-center justify-center gap-3 p-5 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all font-black text-white uppercase tracking-widest text-sm"
           >
-            <img 
-              src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/chatgpt-image-feb-17-2026-03_04_48-am-efGETjOsrf2Xc3da(2).png" 
-              alt="X Community" 
-              className="w-full h-auto drop-shadow-lg" 
-              referrerPolicy="no-referrer"
-            />
+            <span className="font-sans font-black text-xl italic">X</span> Community
           </motion.a>
           <motion.a 
-            whileHover={{ scale: 1.05, y: -5 }} 
             href="https://www.tiktok.com/@wildlifeworldzoo" 
             target="_blank"
-            className="w-32 sm:w-48 md:w-64"
+            className="flex items-center justify-center gap-3 p-5 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all font-black text-white uppercase tracking-widest text-sm"
           >
-            <img 
-              src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/chatgpt-image-feb-17-2026-03_06_19-am-jBA71RT0BVNEcD9w(1).png" 
-              alt="TikTok" 
-              className="w-full h-auto drop-shadow-lg" 
-              referrerPolicy="no-referrer"
-            />
+            <Globe className="text-white" /> TikTok Official
           </motion.a>
           <motion.a 
-            whileHover={{ scale: 1.05, y: -5 }} 
             href="https://www.instagram.com/wildlifeworldzoo/" 
             target="_blank"
-            className="w-32 sm:w-48 md:w-64"
+            className="flex items-center justify-center gap-3 p-5 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all font-black text-white uppercase tracking-widest text-sm"
           >
-            <img 
-              src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/insta-h8tbII9WDpiQH25K(1).png" 
-              alt="Instagram" 
-              className="w-full h-auto drop-shadow-lg" 
-              referrerPolicy="no-referrer"
-            />
+            <Instagram className="text-pink-500" /> Instagram Zoo
+          </motion.a>
+          <motion.a 
+            href="https://dexscreener.com/solana/2jbxebefzmnzgmp8frhsujjqqzudlhjzwbjvh7vbw7df" 
+            target="_blank"
+            className="flex items-center justify-center gap-3 p-5 bg-yellow-400 text-black rounded-2xl hover:bg-yellow-300 transition-all font-black uppercase tracking-widest text-sm"
+          >
+            <LayoutDashboard /> Dexscreener
           </motion.a>
         </div>
-        <p className="text-white/90 mb-8 md:mb-12 font-bold uppercase tracking-[0.3em] md:tracking-[0.5em] text-[10px] md:text-sm">©2026 Jellybean World</p>
-        <div className="max-w-4xl p-6 md:p-10 bg-white/5 backdrop-blur-xl rounded-[1.5rem] md:rounded-[2.5rem] border border-white/10 shadow-2xl">
-          <p className="text-[10px] md:text-sm text-white/80 uppercase tracking-[0.1em] md:tracking-[0.2em] leading-relaxed font-bold">
-            Disclaimer $ JELLYBEAN is a memecoin with no intrinsic value
+
+        <motion.div 
+          className="p-8 bg-white/5 backdrop-blur-xl border border-white/10 rounded-[2.5rem] max-w-3xl w-full mb-12"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+        >
+          <div className="flex items-center gap-3 text-yellow-300 justify-center mb-4">
+            <Wallet size={20} />
+            <h3 className="font-museo text-lg font-black uppercase tracking-widest italic">Support the Zoo (USDC)</h3>
+          </div>
+          <div 
+            onClick={copyDonationToClipboard}
+            className="bg-black/40 border border-white/10 rounded-xl p-4 flex items-center justify-between cursor-pointer hover:bg-black/60 transition-all"
+          >
+            <code className="text-[10px] md:text-sm text-white/70 font-mono truncate mr-4">{DONATION_WALLET}</code>
+            <div className="text-yellow-400">
+              {donationCopied ? <Check size={18} /> : <Copy size={18} />}
+            </div>
+          </div>
+        </motion.div>
+
+        <p className="text-white/60 mb-8 font-bold uppercase tracking-[0.4em] text-[10px]">©2026 Jellybean World • Built for the herd</p>
+        
+        <div className="max-w-4xl p-8 bg-black/40 backdrop-blur-xl rounded-[2rem] border border-white/10 shadow-xl">
+          <p className="text-[10px] md:text-xs text-white/60 uppercase tracking-[0.2em] leading-relaxed font-bold">
+            Disclaimer: $JELLYBEAN is a memecoin with no intrinsic value or expectation of financial return. It's for entertainment and community purposes only.
           </p>
         </div>
       </footer>

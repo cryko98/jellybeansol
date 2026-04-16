@@ -154,7 +154,9 @@ export default function JellybeanGame() {
     const scale = GAME_WIDTH / rect.width;
     const scaledX = relativeX * scale;
     
-    const newX = Math.max(0, Math.min(GAME_WIDTH - PLAYER_WIDTH, scaledX - PLAYER_WIDTH / 2));
+    // Add margin to prevent clipping in rounded corners
+    const margin = 20;
+    const newX = Math.max(margin, Math.min(GAME_WIDTH - PLAYER_WIDTH - margin, scaledX - PLAYER_WIDTH / 2));
     targetPlayerX.current = newX;
   };
 
@@ -188,16 +190,15 @@ export default function JellybeanGame() {
         onTouchMove={handleMouseMove}
       >
         {/* Game UI Overlay */}
-        <div className="absolute top-3 left-4 md:top-6 md:left-8 z-30 flex items-center gap-3 md:gap-6">
-          <div className="bg-black/50 backdrop-blur-md px-3 md:px-6 py-1 md:py-2 rounded-full border border-white/20">
-            <span className="text-white font-black text-sm md:text-2xl">SCORE: {score}</span>
+        <div className="absolute top-4 left-6 md:top-8 md:left-10 z-30 flex items-center gap-4 md:gap-8">
+          <div className="bg-black/60 backdrop-blur-xl px-4 md:px-8 py-1.5 md:py-3 rounded-full border border-white/20 shadow-xl">
+            <span className="text-white font-black text-xs md:text-3xl tracking-tighter">SCORE: {score}</span>
           </div>
-          <div className="flex gap-1 md:gap-2">
+          <div className="flex gap-2">
             {[...Array(3)].map((_, i) => (
               <Heart 
                 key={i} 
-                size={16} 
-                className={`${i < 3 - missed ? 'text-pink-500 fill-pink-500' : 'text-white/20'} transition-colors duration-300 md:w-8 md:h-8`} 
+                className={`${i < 3 - missed ? 'text-pink-500 fill-pink-500' : 'text-white/20'} transition-all scale-75 md:scale-125 md:w-8 md:h-8`} 
               />
             ))}
           </div>
@@ -210,18 +211,14 @@ export default function JellybeanGame() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 z-40 flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm"
+              className="absolute inset-0 z-40 flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm p-4"
             >
-              <motion.img 
-                animate={{ y: [0, -20, 0] }}
-                transition={{ repeat: Infinity, duration: 2 }}
-                src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/jbb-hNum98ZkRGwl7FAw.gif" 
-                className="w-48 mb-8 rounded-3xl shadow-2xl"
-                alt="Jellybean"
-              />
+              <div className="w-32 h-32 md:w-48 md:h-48 bg-pink-500/20 rounded-full flex items-center justify-center text-6xl md:text-8xl mb-6 md:mb-8 shadow-2xl animate-bounce">
+                🦛
+              </div>
               <button 
                 onClick={startGame}
-                className="bg-yellow-400 hover:bg-yellow-300 text-black font-black text-3xl px-12 py-4 rounded-full shadow-[0_10px_0_rgb(202,138,4)] active:translate-y-1 active:shadow-none transition-all uppercase tracking-tighter italic"
+                className="bg-yellow-400 hover:bg-yellow-300 text-black font-black text-2xl md:text-4xl px-8 md:px-16 py-3 md:py-6 rounded-full shadow-[0_6px_0_rgb(202,138,4)] md:shadow-[0_10px_0_rgb(202,138,4)] active:translate-y-1 active:shadow-none transition-all uppercase tracking-tighter italic"
               >
                 Start Game
               </button>
@@ -233,16 +230,16 @@ export default function JellybeanGame() {
             <motion.div 
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="absolute inset-0 z-40 flex flex-col items-center justify-center bg-black/80 backdrop-blur-md"
+              className="absolute inset-0 z-40 flex flex-col items-center justify-center bg-black/80 backdrop-blur-md p-4"
             >
-              <Trophy size={80} className="text-yellow-400 mb-6 animate-bounce" />
-              <h3 className="font-museo text-6xl text-white font-black uppercase italic mb-2">Game Over!</h3>
-              <p className="text-3xl text-yellow-300 font-black mb-12">FINAL SCORE: {score}</p>
+              <Trophy size={60} className="text-yellow-400 mb-4 md:mb-6 animate-bounce md:w-20 md:h-20" />
+              <h3 className="font-museo text-4xl md:text-7xl text-white font-black uppercase italic mb-2 text-center">Game Over!</h3>
+              <p className="text-xl md:text-4xl text-yellow-300 font-black mb-8 md:mb-16">FINAL SCORE: {score}</p>
               <button 
                 onClick={startGame}
-                className="flex items-center gap-4 bg-pink-500 hover:bg-pink-400 text-white font-black text-3xl px-12 py-4 rounded-full shadow-[0_10px_0_rgb(190,24,93)] active:translate-y-1 active:shadow-none transition-all uppercase tracking-tighter italic"
+                className="flex items-center gap-3 md:gap-4 bg-pink-500 hover:bg-pink-400 text-white font-black text-xl md:text-4xl px-10 md:px-16 py-3 md:py-6 rounded-full shadow-[0_6px_0_rgb(190,24,93)] md:shadow-[0_10px_0_rgb(190,24,93)] active:translate-y-1 active:shadow-none transition-all uppercase tracking-tighter italic"
               >
-                <RotateCcw size={32} />
+                <RotateCcw size={24} className="md:w-8 md:h-8" />
                 Try Again
               </button>
             </motion.div>
@@ -254,7 +251,7 @@ export default function JellybeanGame() {
           <>
             {/* Player */}
             <div 
-              className="absolute bottom-0 pointer-events-none transition-transform duration-75"
+              className="absolute bottom-0 pointer-events-none transition-transform duration-75 flex items-center justify-center overflow-visible"
               style={{ 
                 left: `${(playerX / GAME_WIDTH) * 100}%`,
                 width: `${(PLAYER_WIDTH / GAME_WIDTH) * 100}%`,
@@ -262,11 +259,9 @@ export default function JellybeanGame() {
                 transform: `rotate(${playerRotation}deg)`
               }}
             >
-              <img 
-                src="https://lcaryepoaiuzuppladzq.supabase.co/storage/v1/object/public/jellybean/jbb-hNum98ZkRGwl7FAw.gif" 
-                className="w-full h-full object-contain drop-shadow-glow"
-                alt="Player"
-              />
+              <span className="text-5xl sm:text-6xl md:text-8xl select-none leading-none translate-y-[-10%] md:translate-y-0">
+                🦛
+              </span>
             </div>
 
             {/* Candies */}
