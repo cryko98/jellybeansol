@@ -329,8 +329,8 @@ export default function App() {
               <Wallet className="text-white" size={24} />
             </div>
             <div>
-              <h4 className="text-white/60 text-xs font-black uppercase tracking-widest mb-1">Support</h4>
-              <p className="text-2xl text-white font-black uppercase italic">Zoo Funded</p>
+              <h4 className="text-white/60 text-xs font-black uppercase tracking-widest mb-1">Marketing</h4>
+              <p className="text-2xl text-white font-black uppercase italic">Community Driven</p>
             </div>
           </motion.div>
 
@@ -444,8 +444,8 @@ export default function App() {
                 <p className="text-white/40 text-[10px] font-black uppercase tracking-widest">Network</p>
               </div>
               <div className="px-6 py-3 bg-white/5 border border-white/10 rounded-2xl">
-                <p className="text-white text-3xl font-black italic">ZOO</p>
-                <p className="text-white/40 text-[10px] font-black uppercase tracking-widest">Supported</p>
+                <p className="text-white text-3xl font-black italic">COMMUNITY</p>
+                <p className="text-white/40 text-[10px] font-black uppercase tracking-widest">Marketing</p>
               </div>
             </div>
           </div>
@@ -456,9 +456,10 @@ export default function App() {
           >
             <div className="absolute inset-0 bg-pink-500/30 blur-[100px] rounded-full" />
             <img 
-              src={MEME_IMAGES[0]} 
+              src="https://pbs.twimg.com/media/HERxCtmbsAA44MD?format=jpg&name=large" 
               className="w-full h-auto rounded-[3rem] border-8 border-white/10 shadow-2xl relative z-10" 
-              alt="Jellybean Evolution" 
+              alt="Jellybean Bullish" 
+              referrerPolicy="no-referrer"
             />
           </motion.div>
         </div>
@@ -484,7 +485,7 @@ export default function App() {
           {[
             { step: 1, title: "Get a Wallet", icon: <Wallet size={48} />, color: "bg-purple-400", desc: "Download Phantom or Solflare" },
             { step: 2, title: "Get Some SOL", icon: <ShoppingCart size={48} />, color: "bg-pink-400", desc: "Buy SOL on an exchange" },
-            { step: 3, title: "Swap For $JELLYBEAN", icon: <Repeat size={48} />, color: "bg-yellow-400", desc: "Swap SOL on pump.fun" },
+            { step: 3, title: "Swap For $JELLYBEAN", icon: <Repeat size={48} />, color: "bg-yellow-400", desc: "Swap SOL on Jupiter or Raydium" },
             { step: 4, title: "Welcome to the Herd", icon: <CheckCircle2 size={48} />, color: "bg-blue-400", desc: "You are now a hippo!" }
           ].map((item, i) => (
             <motion.div 
@@ -612,13 +613,27 @@ export default function App() {
           <h2 className="font-museo text-4xl md:text-6xl text-white font-black italic uppercase tracking-tighter">$JELLYBEAN</h2>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full max-w-5xl mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full max-w-6xl mb-16">
           <motion.a 
             href="https://x.com/i/communities/2026237091508543653" 
             target="_blank"
             className="flex items-center justify-center gap-3 p-5 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all font-black text-white uppercase tracking-widest text-sm"
           >
             <span className="font-sans font-black text-xl italic">X</span> Community
+          </motion.a>
+          <motion.a 
+            href="https://t.me/jellybeanog" 
+            target="_blank"
+            className="flex items-center justify-center gap-3 p-5 bg-white/5 border border-white/10 rounded-2xl hover:bg-blue-500/20 transition-all font-black text-white uppercase tracking-widest text-sm"
+          >
+            <Send className="text-blue-400" /> English Telegram
+          </motion.a>
+          <motion.a 
+            href="https://t.me/jellybean_ru" 
+            target="_blank"
+            className="flex items-center justify-center gap-3 p-5 bg-white/5 border border-white/10 rounded-2xl hover:bg-blue-500/20 transition-all font-black text-white uppercase tracking-widest text-sm"
+          >
+            <Send className="text-blue-400" /> CIS Telegram
           </motion.a>
           <motion.a 
             href="https://www.tiktok.com/@wildlifeworldzoo" 
@@ -650,7 +665,7 @@ export default function App() {
         >
           <div className="flex items-center gap-3 text-yellow-300 justify-center mb-4">
             <Wallet size={20} />
-            <h3 className="font-museo text-lg font-black uppercase tracking-widest italic">Support the Zoo (USDC)</h3>
+            <h3 className="font-museo text-lg font-black uppercase tracking-widest italic">Community Marketing Wallet</h3>
           </div>
           <div 
             onClick={copyDonationToClipboard}
